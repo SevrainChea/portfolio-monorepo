@@ -96,7 +96,7 @@
     </Transition>
 
     <!-- Desktop Layout - Hidden on Mobile -->
-    <div class="hidden lg:block">
+    <div class="hidden h-full flex-col lg:flex">
       <GlassCard class="flex h-fit flex-col justify-between">
         <img
           src="/public/images/profile_home.jpeg"
@@ -113,7 +113,7 @@
 
       <!-- Desktop Navigation -->
       <nav class="block">
-        <ul class="mt-8 flex flex-col gap-6">
+        <ul class="my-8 flex flex-col gap-6">
           <li>
             <NavLink href="#about">About</NavLink>
           </li>
@@ -125,6 +125,8 @@
           </li>
         </ul>
       </nav>
+
+      <FooterSection class="mt-auto px-0" />
     </div>
   </header>
 </template>
