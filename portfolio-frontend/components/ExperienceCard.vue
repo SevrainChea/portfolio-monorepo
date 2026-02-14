@@ -1,6 +1,6 @@
 <template>
   <GlassCard
-    class="group/experience-card text-fg-muted grid cursor-pointer grid-cols-[auto_1fr] gap-4 !p-4"
+    class="group/experience-card text-fg-muted grid cursor-pointer grid-cols-[auto_1fr] gap-4 !p-4 max-lg:border-white/20 max-lg:bg-black/40 max-lg:backdrop-blur-xl"
     component="a"
     :glassOnHover="true"
     :href="companyLink"
@@ -15,14 +15,14 @@
       <div class="flex items-center gap-1">
         <span class="text-fg-light">
           <span
-            class="group-hover/experience-card:text-fg-highlight transition-colors"
+            class="lg:group-hover/experience-card:text-fg-highlight transition-colors"
             >{{ title }}</span
           >
           · <span class="text-fg-muted">{{ contract }}</span>
         </span>
         <Icon
           name="uil:external-link-alt"
-          class="transition-transform group-hover/experience-card:translate-x-1 group-hover/experience-card:-translate-y-1"
+          class="transition-transform lg:group-hover/experience-card:translate-x-1 lg:group-hover/experience-card:-translate-y-1"
         />
       </div>
       <ol v-if="positions">

@@ -2,7 +2,7 @@
   <section id="experiences" class="scroll-mt-24">
     <ol class="group/list flex flex-col gap-4">
       <ExperienceCard
-        class="group-hover/list:opacity-50 hover:!opacity-100"
+        class="lg:group-hover/list:opacity-50 lg:hover:!opacity-100"
         v-for="(experience, index) in experiences"
         :key="index"
         v-bind="experience"
