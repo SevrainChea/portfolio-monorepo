@@ -23,4 +23,4 @@ __pycache__/
 *.pyc
 *.pyo
 chatbot-backend/venv/
-chatbot-backend/chromadb_data/
+chatbot-backend/chroma_db/
