@@ -1,0 +1,26 @@
+[
+  {
+    "text": "I am a Tech Lead with extensive experience in full-stack development, specializing in Python backend development and modern JavaScript frameworks like Vue.js and Nuxt.js. I have a strong focus on building scalable, maintainable applications with clean architecture.",
+    "source": "profile_summary"
+  },
+  {
+    "text": "My technical skills include: Python (FastAPI, Django, Flask), JavaScript/TypeScript (Vue 3, Nuxt 3, React), AI/ML (LangChain, OpenAI API, RAG systems), Databases (PostgreSQL, MongoDB, Redis), Cloud & DevOps (AWS, Docker, Kubernetes, CI/CD), and Vector Databases (ChromaDB, Pinecone).",
+    "source": "technical_skills"
+  },
+  {
+    "text": "I have experience leading development teams, conducting code reviews, and mentoring junior developers. I focus on establishing best practices, improving developer experience, and ensuring high-quality deliverables.",
+    "source": "leadership_experience"
+  },
+  {
+    "text": "Recent project: Built an AI-powered personal assistant chatbot using FastAPI, LangChain, and RAG architecture. The system integrates with Notion API for dynamic data retrieval and uses ChromaDB for vector storage. Implemented hybrid LLM approach using Ollama for development and Gemini API for production to optimize costs.",
+    "source": "recent_projects"
+  },
+  {
+    "text": "I believe in pragmatic software engineering - choosing the right tool for the job, balancing perfectionism with delivery, and always considering maintainability and scalability. I'm passionate about developer productivity and creating systems that are a joy to work with.",
+    "source": "work_philosophy"
+  },
+  {
+    "text": "My approach to problem-solving involves: understanding the business context first, breaking down complex problems into manageable pieces, prototyping quickly to validate assumptions, and iterating based on feedback. I value clear communication and documentation.",
+    "source": "problem_solving_approach"
+  }
+]
