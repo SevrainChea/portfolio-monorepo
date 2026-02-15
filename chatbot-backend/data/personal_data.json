@@ -1,26 +1,106 @@
 [
   {
-    "text": "I am a Tech Lead with extensive experience in full-stack development, specializing in Python backend development and modern JavaScript frameworks like Vue.js and Nuxt.js. I have a strong focus on building scalable, maintainable applications with clean architecture.",
+    "text": "My name is Sévrain CHEA. I am a Tech Lead and Full-Stack Engineer with 7 years of experience building and scaling web applications. I specialize in designing and implementing system architecture, leading engineering teams, and driving product development from concept to launch. My professional philosophy is a start-up mindset: shipping fast, iterating on product, and building scalable processes for high-performing engineering teams.",
     "source": "profile_summary"
   },
   {
-    "text": "My technical skills include: Python (FastAPI, Django, Flask), JavaScript/TypeScript (Vue 3, Nuxt 3, React), AI/ML (LangChain, OpenAI API, RAG systems), Databases (PostgreSQL, MongoDB, Redis), Cloud & DevOps (AWS, Docker, Kubernetes, CI/CD), and Vector Databases (ChromaDB, Pinecone).",
-    "source": "technical_skills"
+    "text": "I am currently working at Mayday as a Tech Lead (2021–2025). I joined as the first engineer and helped grow the tech team from 0 to 10 engineers. I started by building core product features, then moved into designing scalable systems and leading technical architecture. Today I lead two engineering squads (7 engineers) and focus on driving technical direction, mentoring, and shipping high-impact features. Mayday is a SaaS knowledge management platform (https://www.mayday.fr/).",
+    "source": "experience_mayday"
   },
   {
-    "text": "I have experience leading development teams, conducting code reviews, and mentoring junior developers. I focus on establishing best practices, improving developer experience, and ensuring high-quality deliverables.",
+    "text": "Key achievements at Mayday: grew tech team from 0 to 10 engineers, led two engineering squads of 7 people, collaborated with product on roadmaps and feature prioritization, spearheaded technical discoveries such as a collaborative editor using Y.js, shaped scalable architecture, refactored notification system using RabbitMQ, initiated the LMS product, implemented single/multi-tenant database architecture for premium users, and defined onboarding processes for new engineers.",
+    "source": "experience_mayday_achievements"
+  },
+  {
+    "text": "Tech stack at Mayday: VueJS, TailwindCSS, NodeJS, ExpressJS, NestJS, TypeScript, GraphQL, MongoDB, PostgreSQL, RabbitMQ.",
+    "source": "experience_mayday_stack"
+  },
+  {
+    "text": "I worked at Maiia from 2019 to 2021 (22 months) as a Full Stack Engineer and later Backend Technical Lead. I led a backend team of 3 developers, built the Maiia Pro web application, designed technical architecture and data models for new features, planned technical tasks and estimated timelines, mentored new backend developers, and delivered critical features including agenda management and payment processing. I integrated third-party APIs: Stripe and Algolia. Maiia is a healthcare teleconsultation and scheduling platform for practitioners (https://www.maiia.com/).",
+    "source": "experience_maiia"
+  },
+  {
+    "text": "Tech stack at Maiia: Java, SpringBoot, MongoDB, RabbitMQ, ReactJS, Node.js, JavaScript.",
+    "source": "experience_maiia_stack"
+  },
+  {
+    "text": "I worked at Viveris from 2018 to 2019 (10 months) as a Software Engineer. I was embedded at Cobham in the aerospace sector, where I developed unit tests in C using RTRT (IBM Rational Test RealTime) and validated technical and functional requirements. I then joined an Intelligent Transportation Systems team as a software and QA engineer, serving as a technical consultant for Renault and Akka Technologies on an autonomous vehicle proof of concept. I authored test plans and led functional validation efforts in safety-critical environments.",
+    "source": "experience_viveris"
+  },
+  {
+    "text": "I completed a 6-month internship at Sopra Steria in 2018, working on the GIP-MDS project for the net-entreprises.fr portal (French government tax compliance system). I developed new features with unit testing, built a Circuit Breaker proof of concept using Hystrix for system resilience, led a task force of 4 developers, and reduced the backlog from 50 to under 20 tickets within one month. Tech stack: Java, JEE, JSP, SpringBoot, JUnit, HTML, CSS, JavaScript, jQuery.",
+    "source": "experience_sopra_steria"
+  },
+  {
+    "text": "I completed a 6-month internship at CineApps in 2018. I led development of a Java-based monitoring tool for Twavox, a cinema accessibility device designed for hearing- and visually-impaired audiences. I managed the full cycle from requirements gathering to deployment at client sites, collaborated on software design, testing, and customer support, and authored technical documentation and user manuals. Tech stack: Java, Swing, Linux.",
+    "source": "experience_cineapps"
+  },
+  {
+    "text": "My frontend technical skills: Vue.js (Vue 2 and Vue 3), Nuxt 3, React, TypeScript, JavaScript, TailwindCSS, HTML, CSS, GraphQL (client-side), jQuery.",
+    "source": "skills_frontend"
+  },
+  {
+    "text": "My backend technical skills: Node.js, ExpressJS, NestJS, Python (FastAPI), Java, SpringBoot, JEE. I have experience with REST APIs and GraphQL, message brokers like RabbitMQ, and real-time collaboration using Y.js.",
+    "source": "skills_backend"
+  },
+  {
+    "text": "My database skills: PostgreSQL, MongoDB, Redis. I have designed both single-tenant and multi-tenant database architectures. I also have experience with vector databases (ChromaDB, Pinecone) for AI/ML applications.",
+    "source": "skills_databases"
+  },
+  {
+    "text": "My AI and machine learning skills: LangChain, RAG (Retrieval-Augmented Generation) systems, OpenAI API, Gemini API, Ollama (local LLMs), ChromaDB for vector storage. I built an AI-powered personal assistant chatbot using FastAPI, LangChain, and RAG architecture with a hybrid LLM approach (Ollama for development, Gemini API for production) to optimize costs.",
+    "source": "skills_ai_ml"
+  },
+  {
+    "text": "My DevOps and cloud skills: Docker, Kubernetes, AWS, CI/CD pipelines, Railway (PaaS deployment). I have experience deploying and maintaining production applications on cloud infrastructure.",
+    "source": "skills_devops"
+  },
+  {
+    "text": "My programming language experience: TypeScript, JavaScript (primary), Java (extensive experience from 2018–2021), Python (FastAPI backend, AI tooling), C (embedded systems, aerospace sector).",
+    "source": "skills_languages"
+  },
+  {
+    "text": "My leadership experience: I have led engineering teams across multiple companies. At Mayday, I led two squads totaling 7 engineers. At Maiia, I led a backend team of 3. At Sopra Steria, I led a task force of 4 developers. My leadership responsibilities include technical architecture decisions, roadmap collaboration with product, code reviews, mentoring junior and mid-level developers, defining engineering processes, and team onboarding.",
     "source": "leadership_experience"
   },
   {
-    "text": "Recent project: Built an AI-powered personal assistant chatbot using FastAPI, LangChain, and RAG architecture. The system integrates with Notion API for dynamic data retrieval and uses ChromaDB for vector storage. Implemented hybrid LLM approach using Ollama for development and Gemini API for production to optimize costs.",
-    "source": "recent_projects"
+    "text": "I have deep domain expertise across several industries: SaaS product development (Mayday - knowledge management), healthcare technology (Maiia - teleconsultation and scheduling for practitioners), French government digital services (Sopra Steria - tax compliance), cinema accessibility technology (CineApps - Twavox device for hearing/visually impaired), aerospace and embedded systems (Viveris/Cobham), and autonomous vehicles (Viveris - Renault/Akka Technologies).",
+    "source": "domain_expertise"
   },
   {
-    "text": "I believe in pragmatic software engineering - choosing the right tool for the job, balancing perfectionism with delivery, and always considering maintainability and scalability. I'm passionate about developer productivity and creating systems that are a joy to work with.",
+    "text": "My notable technical projects include: a collaborative knowledge editor using Y.js (real-time collaboration) at Mayday, a multi-tenant database architecture for premium SaaS users at Mayday, a notification system refactor using RabbitMQ at Mayday, a payment processing integration with Stripe at Maiia, an Algolia search integration at Maiia, a Circuit Breaker proof of concept with Hystrix at Sopra Steria, a Java monitoring tool for the Twavox cinema accessibility device at CineApps, and an AI-powered personal portfolio chatbot using FastAPI, LangChain, ChromaDB, and RAG.",
+    "source": "notable_projects"
+  },
+  {
+    "text": "Outside of work, I am a dad to one awesome little boy and love spending quality time with my family. I enjoy cooking for my family and sneaking in quick getaways when we can. I also have a geeky side — whether it's diving into side projects or video games. Building this AI portfolio chatbot is one example of my personal side projects.",
+    "source": "personal_life"
+  },
+  {
+    "text": "My work philosophy: I believe in a start-up mindset — shipping fast, iterating on product, and building scalable processes for high-performing engineering teams. I am pragmatic about software engineering, choosing the right tool for the job and balancing perfectionism with delivery. I am passionate about developer productivity, clean architecture, and creating systems that are a joy to work with.",
     "source": "work_philosophy"
   },
   {
-    "text": "My approach to problem-solving involves: understanding the business context first, breaking down complex problems into manageable pieces, prototyping quickly to validate assumptions, and iterating based on feedback. I value clear communication and documentation.",
+    "text": "My approach to problem-solving: I always start by understanding the business context first, then break down complex problems into manageable pieces, prototype quickly to validate assumptions, and iterate based on feedback. I value clear communication, thorough documentation, and I actively mentor developers to build team capacity rather than creating single points of failure.",
     "source": "problem_solving_approach"
+  },
+  {
+    "text": "My experience with third-party API integrations includes: Stripe (payment processing), Algolia (search), Notion API (dynamic data retrieval for chatbot), OpenAI API, Gemini API (Google AI), and Twavox hardware monitoring systems.",
+    "source": "integrations_experience"
+  },
+  {
+    "text": "My experience with messaging and event-driven systems: I have used RabbitMQ for asynchronous messaging and notification pipelines at both Mayday and Maiia. I designed and refactored event-driven architectures to improve system decoupling and scalability.",
+    "source": "messaging_systems"
+  },
+  {
+    "text": "My experience with testing: I have written unit tests in Java (JUnit), C using RTRT (IBM Rational Test RealTime), and have experience with test plan authoring and functional validation in safety-critical environments (aerospace, autonomous vehicles). I follow test-driven approaches when building critical features.",
+    "source": "testing_experience"
+  },
+  {
+    "text": "Career timeline summary: 2018 – Internship at CineApps (Java monitoring tool for cinema accessibility). 2018 – Internship at Sopra Steria (Java full-stack, French government portal). 2018–2019 – Software Engineer at Viveris (C, embedded systems, aerospace, autonomous vehicles). 2019–2021 – Full Stack then Backend Tech Lead at Maiia (Java/Node.js, healthcare platform). 2021–2025 – Senior Engineer then Tech Lead at Mayday (Vue.js/Node.js/NestJS, SaaS knowledge management).",
+    "source": "career_timeline"
+  },
+  {
+    "text": "I am open to new opportunities and enjoy tackling complex technical challenges, especially those involving system architecture, team scaling, and product-driven engineering. My ideal environment is a fast-moving company where engineering quality and business impact are both valued.",
+    "source": "career_goals"
   }
 ]
