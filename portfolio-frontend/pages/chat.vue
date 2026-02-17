@@ -114,6 +114,9 @@ const config = useRuntimeConfig();
 interface Message {
   role: "user" | "assistant";
   content: string;
+  streaming?: boolean;
+  sources?: string[];
+  model_used?: string;
 }
 
 const messages = ref<Message[]>([]);
@@ -148,28 +151,67 @@ const send = async () => {
   loading.value = true;
   scrollToBottom();
 
+  // Add an empty assistant message to stream into
+  const assistantMsg: Message = { role: "assistant", content: "", streaming: true };
+  messages.value.push(assistantMsg);
+  const msgIndex = messages.value.length - 1;
+
   try {
-    const data = await $fetch<{
-      response: string;
-      conversation_id: string;
-    }>(`${config.public.apiBase}/api/chat`, {
+    const res = await fetch(`${config.public.apiBase}/api/chat/stream`, {
       method: "POST",
-      body: {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         message: text,
         conversation_id: conversationId.value,
-      },
+      }),
     });
 
-    conversationId.value = data.conversation_id;
-    messages.value.push({ role: "assistant", content: data.response });
+    if (!res.ok || !res.body) throw new Error("Stream failed");
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+        const raw = line.slice(5).trim();
+        if (!raw) continue;
+
+        let event: { type: string; content?: string; conversation_id?: string; sources?: string[]; model_used?: string; message?: string };
+        try {
+          event = JSON.parse(raw);
+        } catch {
+          continue;
+        }
+
+        if (event.type === "chunk" && event.content) {
+          messages.value[msgIndex].content += event.content;
+          scrollToBottom();
+        } else if (event.type === "done") {
+          messages.value[msgIndex].streaming = false;
+          messages.value[msgIndex].sources = event.sources;
+          messages.value[msgIndex].model_used = event.model_used;
+          conversationId.value = event.conversation_id ?? null;
+          scrollToBottom();
+        } else if (event.type === "error") {
+          messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
+          messages.value[msgIndex].streaming = false;
+        }
+      }
+    }
   } catch {
-    messages.value.push({
-      role: "assistant",
-      content: "Sorry, something went wrong. Please try again.",
-    });
+    messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
+    messages.value[msgIndex].streaming = false;
   } finally {
     loading.value = false;
-    scrollToBottom();
     nextTick(() => inputEl.value?.focus());
   }
 };
