@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Dict, AsyncGenerator
 import ollama
 import google.generativeai as genai
 from groq import Groq
@@ -13,6 +13,11 @@ class LLMProvider(ABC):
     @abstractmethod
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate a response given a prompt and context"""
+        pass
+
+    @abstractmethod
+    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+        """Stream tokens as an async generator"""
         pass
 
     @abstractmethod
@@ -54,6 +59,32 @@ say so politely and provide a general response."""
             logger.exception("Ollama generation failed")
             raise Exception(f"Ollama generation failed: {str(e)}")
 
+    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
+Use the following context to answer questions accurately.
+
+{context_text}
+
+Question: {prompt}
+
+Answer based on the context provided. If you cannot find relevant information in the context,
+say so politely and provide a general response."""
+
+        try:
+            stream = ollama.chat(
+                model=self.model,
+                messages=[{'role': 'user', 'content': full_prompt}],
+                stream=True
+            )
+            for chunk in stream:
+                content = chunk['message']['content']
+                if content:
+                    yield content
+        except Exception as e:
+            logger.exception("Ollama streaming failed")
+            raise Exception(f"Ollama streaming failed: {str(e)}")
+
     def get_model_name(self) -> str:
         return f"ollama/{self.model}"
 
@@ -93,6 +124,27 @@ say so politely and provide a general response."""
         except Exception as e:
             logger.exception("Gemini generation failed")
             raise Exception(f"Gemini generation failed: {str(e)}")
+
+    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
+Use the following context to answer questions accurately.
+
+{context_text}
+
+Question: {prompt}
+
+Answer based on the context provided. If you cannot find relevant information in the context,
+say so politely and provide a general response."""
+
+        try:
+            response = self.model.generate_content(full_prompt, stream=True)
+            for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+        except Exception as e:
+            logger.exception("Gemini streaming failed")
+            raise Exception(f"Gemini streaming failed: {str(e)}")
 
     def get_model_name(self) -> str:
         return f"gemini/{self.model_name}"
@@ -135,6 +187,32 @@ say so politely and provide a general response."""
             logger.exception("Groq generation failed")
             raise Exception(f"Groq generation failed: {str(e)}")
 
+    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
+Use the following context to answer questions accurately.
+
+{context_text}
+
+Question: {prompt}
+
+Answer based on the context provided. If you cannot find relevant information in the context,
+say so politely and provide a general response."""
+
+        try:
+            stream = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": full_prompt}],
+                stream=True
+            )
+            for chunk in stream:
+                content = chunk.choices[0].delta.content
+                if content:
+                    yield content
+        except Exception as e:
+            logger.exception("Groq streaming failed")
+            raise Exception(f"Groq streaming failed: {str(e)}")
+
     def get_model_name(self) -> str:
         return f"groq/{self.model_name}"
 
@@ -169,6 +247,11 @@ class LLMService:
             "response": response,
             "model_used": self.provider.get_model_name()
         }
+
+    async def generate_response_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+        """Stream tokens from the configured provider"""
+        async for token in self.provider.generate_stream(prompt, context):
+            yield token
 
 
 # Global LLM service instance
