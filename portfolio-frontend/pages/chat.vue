@@ -18,7 +18,7 @@
       class="mx-auto mb-4 flex w-full max-w-4xl flex-1 flex-col overflow-hidden !p-0"
     >
       <!-- Messages -->
-      <div ref="messagesEl" class="flex-1 overflow-y-auto p-6">
+      <div ref="messagesEl" class="no-scrollbar flex-1 overflow-y-auto p-6">
         <div class="flex flex-col gap-6">
           <!-- Empty state -->
           <div
@@ -46,8 +46,11 @@
               "
               class="max-w-[85%] rounded-2xl border px-4 py-3 backdrop-blur-sm"
             >
-              <p class="text-fg-light text-sm leading-relaxed whitespace-pre-wrap">
-                {{ msg.content }}<span
+              <p
+                class="text-fg-light text-sm leading-relaxed whitespace-pre-wrap"
+              >
+                {{ msg.content
+                }}<span
                   v-if="msg.streaming"
                   class="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-white/60 align-middle"
                 />
@@ -56,7 +59,11 @@
 
             <!-- Metadata chips (assistant only, after streaming) -->
             <div
-              v-if="msg.role === 'assistant' && !msg.streaming && (msg.sources?.length || msg.model_used)"
+              v-if="
+                msg.role === 'assistant' &&
+                !msg.streaming &&
+                (msg.sources?.length || msg.model_used)
+              "
               class="flex flex-wrap items-center gap-1.5 px-1"
             >
               <span
@@ -66,17 +73,17 @@
               >
                 {{ source }}
               </span>
-              <span
-                v-if="msg.model_used"
-                class="text-xs text-white/20"
-              >
+              <span v-if="msg.model_used" class="text-xs text-white/20">
                 {{ msg.model_used }}
               </span>
             </div>
           </div>
 
           <!-- Typing indicator (shown only before the first streaming chunk arrives) -->
-          <div v-if="loading && !messages.some((m) => m.streaming)" class="flex items-start">
+          <div
+            v-if="loading && !messages.some((m) => m.streaming)"
+            class="flex items-start"
+          >
             <div
               class="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-sm"
             >
@@ -108,7 +115,7 @@
         <button
           v-if="showScrollCTA"
           @click="scrollToBottomFromCTA"
-          class="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-3 py-2 text-xs font-medium text-fg-light hover:bg-primary/30 transition-colors duration-200"
+          class="bg-primary/20 border-primary/30 text-fg-light hover:bg-primary/30 absolute left-1/2 -translate-x-1/2 bottom-20 z-10 flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors duration-200"
           aria-label="Scroll to latest messages"
         >
           <Icon name="uil:arrow-down" size="16" />
@@ -150,13 +157,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, nextTick, onMounted, onUnmounted } from "vue";
 
 const config = useRuntimeConfig();
 
 type SSEEvent =
   | { type: "chunk"; content: string }
-  | { type: "done"; conversation_id: string; sources: string[]; model_used: string }
+  | {
+      type: "done";
+      conversation_id: string;
+      sources: string[];
+      model_used: string;
+    }
   | { type: "error"; message: string };
 
 interface Message {
@@ -198,7 +210,7 @@ const handleScroll = () => {
   if (!messagesEl.value) return;
 
   const el = messagesEl.value;
-  const isAtBottom = (el.scrollTop + el.clientHeight) >= (el.scrollHeight - 50);
+  const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 50;
 
   // Update state
   userAtBottom.value = isAtBottom;
@@ -220,7 +232,11 @@ const send = async () => {
   scrollToBottom();
 
   // Add an empty assistant message to stream into
-  const assistantMsg: Message = { role: "assistant", content: "", streaming: true };
+  const assistantMsg: Message = {
+    role: "assistant",
+    content: "",
+    streaming: true,
+  };
   messages.value.push(assistantMsg);
   const msgIndex = messages.value.length - 1;
 
@@ -283,14 +299,16 @@ const send = async () => {
 
           scrollToBottom();
         } else if (event.type === "error") {
-          messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
+          messages.value[msgIndex].content =
+            "Sorry, something went wrong. Please try again.";
           messages.value[msgIndex].streaming = false;
         }
       }
     }
   } catch (e) {
     console.error("[chat] Streaming error:", e);
-    messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
+    messages.value[msgIndex].content =
+      "Sorry, something went wrong. Please try again.";
     messages.value[msgIndex].streaming = false;
   } finally {
     reader?.cancel();
@@ -312,13 +330,13 @@ const scrollToBottomFromCTA = () => {
 
 onMounted(() => {
   if (messagesEl.value) {
-    messagesEl.value.addEventListener('scroll', handleScroll);
+    messagesEl.value.addEventListener("scroll", handleScroll);
   }
 });
 
 onUnmounted(() => {
   if (messagesEl.value) {
-    messagesEl.value.removeEventListener('scroll', handleScroll);
+    messagesEl.value.removeEventListener("scroll", handleScroll);
   }
 });
 </script>
