@@ -1,3 +1,4 @@
+import asyncio
 import json
 import uuid
 from fastapi import APIRouter, HTTPException
@@ -52,15 +53,17 @@ async def chat_stream(request: ChatRequest):
     Streaming chat endpoint using Server-Sent Events.
     Yields chunk events for each token, then a done event with metadata.
     """
-    # Retrieve context and prepare metadata before streaming
-    context_docs = rag_service.retrieve(request.message, k=3)
-    context_texts = [doc["text"] for doc in context_docs]
-    sources = list(set(doc["source"] for doc in context_docs))
-    conversation_id = request.conversation_id or str(uuid.uuid4())
-    model_used = llm_service.provider.get_model_name()
-
     async def event_generator():
         try:
+            # Retrieve context in a thread to avoid blocking the event loop
+            context_docs = await asyncio.to_thread(
+                rag_service.retrieve, request.message, 3
+            )
+            context_texts = [doc["text"] for doc in context_docs]
+            sources = list(set(doc["source"] for doc in context_docs))
+            conversation_id = request.conversation_id or str(uuid.uuid4())
+            model_used = llm_service.provider.get_model_name()
+
             async for token in llm_service.generate_response_stream(
                 prompt=request.message,
                 context=context_texts
