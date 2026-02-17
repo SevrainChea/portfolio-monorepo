@@ -151,6 +151,8 @@ const loading = ref(false);
 const conversationId = ref<string | null>(null);
 const messagesEl = ref<HTMLElement | null>(null);
 const inputEl = ref<HTMLTextAreaElement | null>(null);
+const userAtBottom = ref(true);
+const showScrollCTA = ref(false);
 
 const autoResize = () => {
   const el = inputEl.value;
