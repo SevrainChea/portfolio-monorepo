@@ -255,6 +255,12 @@ const send = async () => {
           messages.value[msgIndex].sources = event.sources;
           messages.value[msgIndex].model_used = event.model_used;
           conversationId.value = event.conversation_id ?? null;
+
+          // Show CTA if user scrolled up during streaming
+          if (!userAtBottom.value) {
+            showScrollCTA.value = true;
+          }
+
           scrollToBottom();
         } else if (event.type === "error") {
           messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
