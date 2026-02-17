@@ -164,7 +164,10 @@ class GroqProvider(LLMProvider):
         try:
             response = self.client.chat.completions.create(
                 model=self.model_name,
-                messages=[{"role": "user", "content": full_prompt}]
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": full_prompt}
+                ]
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -177,7 +180,10 @@ class GroqProvider(LLMProvider):
         try:
             stream = await self.async_client.chat.completions.create(
                 model=self.model_name,
-                messages=[{"role": "user", "content": full_prompt}],
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": full_prompt}
+                ],
                 stream=True
             )
             async for chunk in stream:
