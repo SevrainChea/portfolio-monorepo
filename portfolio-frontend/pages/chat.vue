@@ -164,6 +164,9 @@ const autoResize = () => {
 };
 
 const scrollToBottom = () => {
+  // Only auto-scroll if user is already at the bottom
+  if (!userAtBottom.value) return;
+
   nextTick(() => {
     if (messagesEl.value) {
       messagesEl.value.scrollTop = messagesEl.value.scrollHeight;
