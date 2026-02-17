@@ -6,6 +6,9 @@ from app.config import settings
 import hashlib
 
 
+RELEVANCE_THRESHOLD = 0.65
+
+
 class RAGService:
     """Retrieval-Augmented Generation service using ChromaDB"""
     
@@ -52,34 +55,42 @@ class RAGService:
         
         logger.info("Ingested {} documents", len(documents))
     
-    def retrieve(self, query: str, k: int = 3) -> List[Dict[str, str]]:
+    def retrieve(self, query: str, k: int = 5) -> List[Dict[str, str]]:
         """
         Retrieve relevant documents for a query
-        
+
         Args:
             query: Search query
-            k: Number of results to return
-            
+            k: Number of results to retrieve before filtering
+
         Returns:
-            List of dicts with 'text' and 'source' keys
+            List of dicts with 'text', 'source', and 'relevance' keys
         """
         if self.collection.count() == 0:
             return []
-        
+
         results = self.collection.query(
             query_texts=[query],
             n_results=min(k, self.collection.count())
         )
-        
-        # Format results
+
+        # Format results and filter by relevance threshold
         documents = []
         if results["documents"] and results["documents"][0]:
+            distances = results["distances"][0] if results.get("distances") else []
             for i, doc in enumerate(results["documents"][0]):
-                documents.append({
-                    "text": doc,
-                    "source": results["metadatas"][0][i]["source"] if results["metadatas"] else "unknown"
-                })
-        
+                # Convert distance to similarity score (1 - distance)
+                distance = distances[i] if i < len(distances) else 0
+                relevance = 1 - distance
+
+                # Filter by relevance threshold
+                if relevance >= RELEVANCE_THRESHOLD:
+                    documents.append({
+                        "text": doc,
+                        "source": results["metadatas"][0][i]["source"] if results["metadatas"] else "unknown",
+                        "relevance": round(relevance, 2)
+                    })
+
         return documents
     
     def clear(self) -> None:
