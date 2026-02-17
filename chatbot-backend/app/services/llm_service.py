@@ -20,9 +20,17 @@ class LLMProvider(ABC):
     """Abstract base class for LLM providers"""
 
     def _build_prompt(self, prompt: str, context: List[Dict[str, str]]) -> str:
-        """Build the user message with formatted context (system prompt handled separately)"""
+        """Build the user message with formatted context (system prompt handled separately).
+
+        Args:
+            prompt: The user question/request
+            context: List of context dicts with keys: 'text' (required), 'relevance' (optional), 'source' (optional)
+
+        Returns:
+            Formatted prompt string with context sections and question
+        """
         context_text = "\n\n".join([
-            f"Context {i+1} [relevance: {ctx.get('relevance', 'N/A')} | from: {ctx.get('source', 'unknown')}]:\n{ctx['text']}"
+            f"Context {i+1} [relevance: {ctx.get('relevance', 'N/A')} | from: {ctx.get('source', 'unknown')}]:\n{ctx.get('text', '[No text provided]')}"
             for i, ctx in enumerate(context)
         ])
         return f"""{context_text}
