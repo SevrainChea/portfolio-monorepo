@@ -75,8 +75,8 @@
             </div>
           </div>
 
-          <!-- Typing indicator -->
-          <div v-if="loading" class="flex items-start">
+          <!-- Typing indicator (shown only before the first streaming chunk arrives) -->
+          <div v-if="loading && !messages.some((m) => m.streaming)" class="flex items-start">
             <div
               class="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-sm"
             >
