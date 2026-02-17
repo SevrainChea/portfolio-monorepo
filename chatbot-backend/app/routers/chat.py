@@ -50,7 +50,7 @@ async def chat(request: ChatRequest):
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     """
-    Streaming chat endpoint using Server-Sent Events.
+    Streaming chat endpoint using Server-Sent Events
     Yields chunk events for each token, then a done event with metadata.
     """
     async def event_generator():
