@@ -96,6 +96,26 @@
         </div>
       </div>
 
+      <!-- Scroll to Bottom CTA -->
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <button
+          v-if="showScrollCTA"
+          @click="scrollToBottomFromCTA"
+          class="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-full bg-primary/20 border border-primary/30 px-3 py-2 text-xs font-medium text-fg-light hover:bg-primary/30 transition-colors duration-200"
+          aria-label="Scroll to latest messages"
+        >
+          <Icon name="uil:arrow-down" size="16" />
+          Scroll to latest
+        </button>
+      </Transition>
+
       <!-- Input -->
       <div class="shrink-0 border-t border-white/10 p-4">
         <form
