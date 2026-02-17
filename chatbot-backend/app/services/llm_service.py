@@ -6,30 +6,36 @@ from groq import Groq, AsyncGroq
 from loguru import logger
 from app.config import settings
 
+SYSTEM_PROMPT = """You are a helpful AI assistant representing Sevrain CHEA's portfolio.
+
+**Guidelines:**
+- ONLY use the provided context to answer questions
+- If information is not in the context, clearly say so
+- Format answers with structure: use short paragraphs and bullet points for key details
+- Be concise—avoid verbose explanations
+- When listing items (skills, projects, etc.), use bullets with brief descriptions"""
+
 
 class LLMProvider(ABC):
     """Abstract base class for LLM providers"""
 
-    def _build_prompt(self, prompt: str, context: List[str]) -> str:
-        """Build the full prompt with context for any provider"""
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-        return f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
+    def _build_prompt(self, prompt: str, context: List[Dict[str, str]]) -> str:
+        """Build the user message with formatted context (system prompt handled separately)"""
+        context_text = "\n\n".join([
+            f"Context {i+1} [relevance: {ctx.get('relevance', 'N/A')} | from: {ctx.get('source', 'unknown')}]:\n{ctx['text']}"
+            for i, ctx in enumerate(context)
+        ])
+        return f"""{context_text}
 
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+Question: {prompt}"""
 
     @abstractmethod
-    def generate(self, prompt: str, context: List[str]) -> str:
+    def generate(self, prompt: str, context: List[Dict[str, str]]) -> str:
         """Generate a response given a prompt and context"""
         pass
 
     @abstractmethod
-    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+    async def generate_stream(self, prompt: str, context: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
         """Stream tokens as an async generator"""
         pass
 
@@ -46,7 +52,7 @@ class OllamaProvider(LLMProvider):
         self.model = model or settings.ollama_model
         self.base_url = base_url or settings.ollama_base_url
 
-    def generate(self, prompt: str, context: List[str]) -> str:
+    def generate(self, prompt: str, context: List[Dict[str, str]]) -> str:
         """Generate response using Ollama"""
         full_prompt = self._build_prompt(prompt, context)
 
@@ -60,7 +66,7 @@ class OllamaProvider(LLMProvider):
             logger.exception("Ollama generation failed")
             raise Exception(f"Ollama generation failed: {str(e)}")
 
-    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+    async def generate_stream(self, prompt: str, context: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
         full_prompt = self._build_prompt(prompt, context)
 
         try:
@@ -94,7 +100,7 @@ class GeminiProvider(LLMProvider):
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(self.model_name)
 
-    def generate(self, prompt: str, context: List[str]) -> str:
+    def generate(self, prompt: str, context: List[Dict[str, str]]) -> str:
         """Generate response using Gemini"""
         full_prompt = self._build_prompt(prompt, context)
 
@@ -105,7 +111,7 @@ class GeminiProvider(LLMProvider):
             logger.exception("Gemini generation failed")
             raise Exception(f"Gemini generation failed: {str(e)}")
 
-    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+    async def generate_stream(self, prompt: str, context: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
         full_prompt = self._build_prompt(prompt, context)
 
         try:
@@ -134,7 +140,7 @@ class GroqProvider(LLMProvider):
         self.client = Groq(api_key=self.api_key)
         self.async_client = AsyncGroq(api_key=self.api_key)
 
-    def generate(self, prompt: str, context: List[str]) -> str:
+    def generate(self, prompt: str, context: List[Dict[str, str]]) -> str:
         """Generate response using Groq"""
         full_prompt = self._build_prompt(prompt, context)
 
@@ -148,7 +154,7 @@ class GroqProvider(LLMProvider):
             logger.exception("Groq generation failed")
             raise Exception(f"Groq generation failed: {str(e)}")
 
-    async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+    async def generate_stream(self, prompt: str, context: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
         full_prompt = self._build_prompt(prompt, context)
 
         try:
@@ -190,7 +196,7 @@ class LLMService:
         else:
             raise ValueError(f"Unknown LLM provider: {settings.llm_provider}")
 
-    def generate_response(self, prompt: str, context: List[str]) -> Dict[str, str]:
+    def generate_response(self, prompt: str, context: List[Dict[str, str]]) -> Dict[str, str]:
         """Generate a response using the configured provider"""
 
         response = self.provider.generate(prompt, context)
@@ -200,7 +206,7 @@ class LLMService:
             "model_used": self.provider.get_model_name()
         }
 
-    async def generate_response_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
+    async def generate_response_stream(self, prompt: str, context: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
         """Stream tokens from the configured provider"""
         async for token in self.provider.generate_stream(prompt, context):
             yield token
