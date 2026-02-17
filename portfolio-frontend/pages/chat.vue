@@ -130,6 +130,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick, onMounted, onUnmounted } from 'vue';
+
 const config = useRuntimeConfig();
 
 type SSEEvent =
@@ -167,6 +169,21 @@ const scrollToBottom = () => {
       messagesEl.value.scrollTop = messagesEl.value.scrollHeight;
     }
   });
+};
+
+const handleScroll = () => {
+  if (!messagesEl.value) return;
+
+  const el = messagesEl.value;
+  const isAtBottom = (el.scrollTop + el.clientHeight) >= (el.scrollHeight - 50);
+
+  // Update state
+  userAtBottom.value = isAtBottom;
+
+  // Auto-dismiss CTA if scrolled to bottom
+  if (isAtBottom && showScrollCTA.value) {
+    showScrollCTA.value = false;
+  }
 };
 
 const send = async () => {
@@ -252,4 +269,16 @@ const send = async () => {
     nextTick(() => inputEl.value?.focus());
   }
 };
+
+onMounted(() => {
+  if (messagesEl.value) {
+    messagesEl.value.addEventListener('scroll', handleScroll);
+  }
+});
+
+onUnmounted(() => {
+  if (messagesEl.value) {
+    messagesEl.value.removeEventListener('scroll', handleScroll);
+  }
+});
 </script>
