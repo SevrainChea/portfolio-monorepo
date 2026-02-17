@@ -1,5 +1,12 @@
-from fastapi import FastAPI
+# FIRST — before other app imports
+from app.logging_config import setup_logging
+setup_logging()
+
+import time
+from loguru import logger
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.config import settings
 from app.models import HealthResponse
 from app.routers import chat
@@ -26,6 +33,21 @@ app.add_middleware(
 app.include_router(chat.router)
 
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled exception on {} {}", request.method, request.url.path)
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    ms = (time.perf_counter() - start) * 1000
+    logger.info("{} {} {} {:.1f}ms", request.method, request.url.path, response.status_code, ms)
+    return response
+
+
 @app.get("/", response_model=HealthResponse)
 async def health_check():
     """Health check endpoint"""
@@ -39,16 +61,16 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """Startup event handler"""
-    print("🚀 Starting Personal Portfolio Chatbot API")
-    print(f"📍 Environment: {settings.environment}")
-    print(f"🤖 LLM Provider: {settings.llm_provider}")
-    print(f"🔓 CORS Origins: {settings.cors_origins}")
+    logger.info("Starting Personal Portfolio Chatbot API")
+    logger.info("Environment: {}", settings.environment)
+    logger.info("LLM Provider: {}", settings.llm_provider)
+    logger.info("CORS Origins: {}", settings.cors_origins)
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Shutdown event handler"""
-    print("👋 Shutting down Personal Portfolio Chatbot API")
+    logger.info("Shutting down Personal Portfolio Chatbot API")
 
 
 if __name__ == "__main__":

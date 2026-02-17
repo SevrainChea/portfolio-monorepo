@@ -6,11 +6,13 @@ class Settings(BaseSettings):
     """Application settings with environment variable support"""
     
     # LLM Configuration
-    llm_provider: Literal["ollama", "gemini"] = "ollama"
+    llm_provider: Literal["ollama", "gemini", "groq"] = "ollama"
     ollama_model: str = "llama3.2"
     ollama_base_url: str = "http://localhost:11434"
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-pro"
+    gemini_model: str = "gemini-2.0-flash-lite"
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.1-8b-instant"
     
     # Application Settings
     environment: Literal["development", "production"] = "development"

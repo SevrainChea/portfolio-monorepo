@@ -1,6 +1,7 @@
 from typing import List, Dict
 import chromadb
 from chromadb.config import Settings as ChromaSettings
+from loguru import logger
 from app.config import settings
 import hashlib
 
@@ -21,7 +22,7 @@ class RAGService:
             metadata={"description": "Personal portfolio information"}
         )
         
-        print(f"📚 ChromaDB initialized with {self.collection.count()} documents")
+        logger.info("ChromaDB initialized with {} documents", self.collection.count())
     
     def ingest_documents(self, documents: List[Dict[str, str]]) -> None:
         """
@@ -49,7 +50,7 @@ class RAGService:
             ids=ids
         )
         
-        print(f"✅ Ingested {len(documents)} documents")
+        logger.info("Ingested {} documents", len(documents))
     
     def retrieve(self, query: str, k: int = 3) -> List[Dict[str, str]]:
         """
@@ -88,7 +89,7 @@ class RAGService:
             name="portfolio_knowledge",
             metadata={"description": "Personal portfolio information"}
         )
-        print("🗑️ Cleared all documents")
+        logger.info("Cleared all documents")
     
     def get_stats(self) -> Dict[str, int]:
         """Get collection statistics"""
