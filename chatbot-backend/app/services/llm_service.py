@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, AsyncGenerator
 import ollama
 import google.generativeai as genai
-from groq import Groq
+from groq import Groq, AsyncGroq
 from loguru import logger
 from app.config import settings
 
@@ -72,12 +72,12 @@ Answer based on the context provided. If you cannot find relevant information in
 say so politely and provide a general response."""
 
         try:
-            stream = ollama.chat(
+            client = ollama.AsyncClient(host=self.base_url)
+            async for chunk in await client.chat(
                 model=self.model,
                 messages=[{'role': 'user', 'content': full_prompt}],
                 stream=True
-            )
-            for chunk in stream:
+            ):
                 content = chunk['message']['content']
                 if content:
                     yield content
@@ -138,8 +138,8 @@ Answer based on the context provided. If you cannot find relevant information in
 say so politely and provide a general response."""
 
         try:
-            response = self.model.generate_content(full_prompt, stream=True)
-            for chunk in response:
+            response = await self.model.generate_content_async(full_prompt, stream=True)
+            async for chunk in response:
                 if chunk.text:
                     yield chunk.text
         except Exception as e:
@@ -161,6 +161,7 @@ class GroqProvider(LLMProvider):
             raise ValueError("Groq API key is required")
 
         self.client = Groq(api_key=self.api_key)
+        self.async_client = AsyncGroq(api_key=self.api_key)
 
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate response using Groq"""
@@ -200,12 +201,12 @@ Answer based on the context provided. If you cannot find relevant information in
 say so politely and provide a general response."""
 
         try:
-            stream = self.client.chat.completions.create(
+            stream = await self.async_client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": full_prompt}],
                 stream=True
             )
-            for chunk in stream:
+            async for chunk in stream:
                 content = chunk.choices[0].delta.content
                 if content:
                     yield content
