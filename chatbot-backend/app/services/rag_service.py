@@ -6,7 +6,7 @@ from app.config import settings
 import hashlib
 
 
-RELEVANCE_THRESHOLD = 0.65
+RELEVANCE_THRESHOLD = 0.2
 
 
 class RAGService:
@@ -79,9 +79,9 @@ class RAGService:
         if results["documents"] and results["documents"][0]:
             distances = results["distances"][0] if results.get("distances") else []
             for i, doc in enumerate(results["documents"][0]):
-                # Convert distance to similarity score (1 - distance)
-                distance = distances[i] if i < len(distances) else 0
-                relevance = 1 - distance
+                # Convert cosine distance to similarity score (cosine distance range is [0, 2])
+                distance = distances[i] if i < len(distances) else 2.0
+                relevance = (2 - distance) / 2  # Normalize to [0, 1]
 
                 # Filter by relevance threshold
                 if relevance >= RELEVANCE_THRESHOLD:
