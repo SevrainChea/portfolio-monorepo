@@ -115,7 +115,7 @@
         <button
           v-if="showScrollCTA"
           @click="scrollToBottomFromCTA"
-          class="bg-primary/20 border-primary/30 text-fg-light hover:bg-primary/30 absolute left-1/2 -translate-x-1/2 bottom-20 z-10 flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors duration-200"
+          class="bg-primary/20 border-primary/30 text-fg-light hover:bg-primary/30 absolute bottom-30 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors duration-200"
           aria-label="Scroll to latest messages"
         >
           <Icon name="uil:arrow-down" size="16" />
