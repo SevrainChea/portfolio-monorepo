@@ -10,6 +10,19 @@ from app.config import settings
 class LLMProvider(ABC):
     """Abstract base class for LLM providers"""
 
+    def _build_prompt(self, prompt: str, context: List[str]) -> str:
+        """Build the full prompt with context for any provider"""
+        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+        return f"""You are a helpful AI assistant representing a person's portfolio.
+Use the following context to answer questions accurately.
+
+{context_text}
+
+Question: {prompt}
+
+Answer based on the context provided. If you cannot find relevant information in the context,
+say so politely and provide a general response."""
+
     @abstractmethod
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate a response given a prompt and context"""
@@ -35,19 +48,7 @@ class OllamaProvider(LLMProvider):
 
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate response using Ollama"""
-
-        # Build the full prompt with context
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             response = ollama.chat(
@@ -60,16 +61,7 @@ say so politely and provide a general response."""
             raise Exception(f"Ollama generation failed: {str(e)}")
 
     async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             client = ollama.AsyncClient(host=self.base_url)
@@ -104,19 +96,7 @@ class GeminiProvider(LLMProvider):
 
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate response using Gemini"""
-
-        # Build the full prompt with context
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             response = self.model.generate_content(full_prompt)
@@ -126,16 +106,7 @@ say so politely and provide a general response."""
             raise Exception(f"Gemini generation failed: {str(e)}")
 
     async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             response = await self.model.generate_content_async(full_prompt, stream=True)
@@ -165,18 +136,7 @@ class GroqProvider(LLMProvider):
 
     def generate(self, prompt: str, context: List[str]) -> str:
         """Generate response using Groq"""
-
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             response = self.client.chat.completions.create(
@@ -189,16 +149,7 @@ say so politely and provide a general response."""
             raise Exception(f"Groq generation failed: {str(e)}")
 
     async def generate_stream(self, prompt: str, context: List[str]) -> AsyncGenerator[str, None]:
-        context_text = "\n\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
-        full_prompt = f"""You are a helpful AI assistant representing a person's portfolio.
-Use the following context to answer questions accurately.
-
-{context_text}
-
-Question: {prompt}
-
-Answer based on the context provided. If you cannot find relevant information in the context,
-say so politely and provide a general response."""
+        full_prompt = self._build_prompt(prompt, context)
 
         try:
             stream = await self.async_client.chat.completions.create(
