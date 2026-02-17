@@ -18,17 +18,16 @@ async def chat(request: ChatRequest):
     Chat endpoint that uses RAG to answer questions about the portfolio
     """
     try:
-        # Retrieve relevant context from vector store
-        context_docs = rag_service.retrieve(request.message, k=3)
+        # Retrieve relevant context from vector store (filtered by relevance)
+        context_docs = rag_service.retrieve(request.message, k=5)
 
-        # Extract text and sources
-        context_texts = [doc["text"] for doc in context_docs]
+        # Extract sources (relevance filtering may result in fewer docs)
         sources = [doc["source"] for doc in context_docs]
 
         # Generate response using LLM
         result = llm_service.generate_response(
             prompt=request.message,
-            context=context_texts
+            context=context_docs  # Pass full dicts with relevance scores
         )
 
         # Generate or use existing conversation ID
@@ -57,16 +56,15 @@ async def chat_stream(request: ChatRequest):
         try:
             # Retrieve context in a thread to avoid blocking the event loop
             context_docs = await asyncio.to_thread(
-                rag_service.retrieve, request.message, 3
+                rag_service.retrieve, request.message, 5
             )
-            context_texts = [doc["text"] for doc in context_docs]
             sources = list(set(doc["source"] for doc in context_docs))
             conversation_id = request.conversation_id or str(uuid.uuid4())
             model_used = llm_service.provider.get_model_name()
 
             async for token in llm_service.generate_response_stream(
                 prompt=request.message,
-                context=context_texts
+                context=context_docs  # Pass full dicts with relevance scores
             ):
                 event = json.dumps({"type": "chunk", "content": token})
                 yield f"data: {event}\n\n"
