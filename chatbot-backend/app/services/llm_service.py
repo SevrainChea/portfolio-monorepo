@@ -67,7 +67,10 @@ class OllamaProvider(LLMProvider):
         try:
             response = ollama.chat(
                 model=self.model,
-                messages=[{'role': 'user', 'content': full_prompt}]
+                messages=[
+                    {'role': 'system', 'content': SYSTEM_PROMPT},
+                    {'role': 'user', 'content': full_prompt}
+                ]
             )
             return response['message']['content']
         except Exception as e:
@@ -81,7 +84,10 @@ class OllamaProvider(LLMProvider):
             client = ollama.AsyncClient(host=self.base_url)
             async for chunk in await client.chat(
                 model=self.model,
-                messages=[{'role': 'user', 'content': full_prompt}],
+                messages=[
+                    {'role': 'system', 'content': SYSTEM_PROMPT},
+                    {'role': 'user', 'content': full_prompt}
+                ],
                 stream=True
             ):
                 content = chunk['message']['content']
