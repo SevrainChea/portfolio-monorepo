@@ -1,7 +1,0 @@
-{
-  "buildCommand": "cd portfolio-frontend && pnpm install && pnpm build",
-  "outputDirectory": "portfolio-frontend/.output/public",
-  "env": {
-    "NITRO_PRERENDER": "true"
-  }
-}
