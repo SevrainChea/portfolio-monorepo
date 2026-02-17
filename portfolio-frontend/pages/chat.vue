@@ -111,6 +111,11 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 
+type SSEEvent =
+  | { type: "chunk"; content: string }
+  | { type: "done"; conversation_id: string; sources: string[]; model_used: string }
+  | { type: "error"; message: string };
+
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -156,6 +161,8 @@ const send = async () => {
   messages.value.push(assistantMsg);
   const msgIndex = messages.value.length - 1;
 
+  let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+
   try {
     const res = await fetch(`${config.public.apiBase}/api/chat/stream`, {
       method: "POST",
@@ -168,13 +175,18 @@ const send = async () => {
 
     if (!res.ok || !res.body) throw new Error("Stream failed");
 
-    const reader = res.body.getReader();
+    reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {
+        // Flush any remaining bytes in the decoder
+        const remaining = decoder.decode();
+        if (remaining) buffer += remaining;
+        break;
+      }
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
@@ -185,14 +197,14 @@ const send = async () => {
         const raw = line.slice(5).trim();
         if (!raw) continue;
 
-        let event: { type: string; content?: string; conversation_id?: string; sources?: string[]; model_used?: string; message?: string };
+        let event: SSEEvent;
         try {
-          event = JSON.parse(raw);
+          event = JSON.parse(raw) as SSEEvent;
         } catch {
           continue;
         }
 
-        if (event.type === "chunk" && event.content) {
+        if (event.type === "chunk") {
           messages.value[msgIndex].content += event.content;
           scrollToBottom();
         } else if (event.type === "done") {
@@ -207,10 +219,12 @@ const send = async () => {
         }
       }
     }
-  } catch {
+  } catch (e) {
+    console.error("[chat] Streaming error:", e);
     messages.value[msgIndex].content = "Sorry, something went wrong. Please try again.";
     messages.value[msgIndex].streaming = false;
   } finally {
+    reader?.cancel();
     loading.value = false;
     nextTick(() => inputEl.value?.focus());
   }
