@@ -46,11 +46,32 @@
               "
               class="max-w-[85%] rounded-2xl border px-4 py-3 backdrop-blur-sm"
             >
-              <p
-                class="text-fg-light text-sm leading-relaxed whitespace-pre-wrap"
-              >
-                {{ msg.content }}
+              <p class="text-fg-light text-sm leading-relaxed whitespace-pre-wrap">
+                {{ msg.content }}<span
+                  v-if="msg.streaming"
+                  class="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-white/60 align-middle"
+                />
               </p>
+            </div>
+
+            <!-- Metadata chips (assistant only, after streaming) -->
+            <div
+              v-if="msg.role === 'assistant' && !msg.streaming && (msg.sources?.length || msg.model_used)"
+              class="flex flex-wrap items-center gap-1.5 px-1"
+            >
+              <span
+                v-for="source in msg.sources"
+                :key="source"
+                class="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-white/40"
+              >
+                {{ source }}
+              </span>
+              <span
+                v-if="msg.model_used"
+                class="text-xs text-white/20"
+              >
+                {{ msg.model_used }}
+              </span>
             </div>
           </div>
 
