@@ -112,7 +112,10 @@ class GeminiProvider(LLMProvider):
             raise ValueError("Gemini API key is required")
 
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(self.model_name)
+        self.model = genai.GenerativeModel(
+            self.model_name,
+            system_instruction=SYSTEM_PROMPT
+        )
 
     def generate(self, prompt: str, context: List[Dict[str, str]]) -> str:
         """Generate response using Gemini"""
