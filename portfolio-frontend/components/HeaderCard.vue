@@ -1,6 +1,6 @@
 <template>
   <header
-    class="grow lg:sticky lg:top-0 lg:h-[calc(100vh-4rem)] lg:min-w-[40%] lg:py-12"
+    class="lg:flex-shrink-0 lg:h-full lg:min-w-[40%] lg:overflow-hidden lg:py-12"
   >
     <!-- Mobile Sticky Header -->
     <div

@@ -3,7 +3,7 @@
     class="text-fg-light flex h-full flex-col text-shadow-lg lg:flex-row lg:space-x-30"
   >
     <HeaderCard />
-    <main class="text-fg-light space-y-8 pt-20 lg:pt-12">
+    <main class="text-fg-light flex-1 scroll-smooth space-y-8 overflow-y-auto pt-20 lg:pt-12">
       <AboutSection />
       <ExperiencesSection />
       <section id="projects" class="scroll-mt-24">projects</section>
