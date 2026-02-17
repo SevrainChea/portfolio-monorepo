@@ -1,8 +1,7 @@
 {
   "buildCommand": "cd portfolio-frontend && pnpm install && pnpm build",
   "outputDirectory": "portfolio-frontend/.output/public",
-  "monorepoRoot": true,
-  "github": {
-    "silent": true
+  "env": {
+    "NITRO_PRERENDER": "true"
   }
 }
