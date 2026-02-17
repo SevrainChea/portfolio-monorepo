@@ -279,6 +279,17 @@ const send = async () => {
   }
 };
 
+const scrollToBottomFromCTA = () => {
+  showScrollCTA.value = false;
+  userAtBottom.value = true;
+
+  nextTick(() => {
+    if (messagesEl.value) {
+      messagesEl.value.scrollTop = messagesEl.value.scrollHeight;
+    }
+  });
+};
+
 onMounted(() => {
   if (messagesEl.value) {
     messagesEl.value.addEventListener('scroll', handleScroll);
