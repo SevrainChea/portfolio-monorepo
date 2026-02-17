@@ -43,11 +43,15 @@ Deployed to Railway via `Procfile`: `uvicorn app.main:app --host 0.0.0.0 --port 
 
 - `app/main.py` — App init, CORS middleware, startup/shutdown handlers
 - `app/config.py` — Pydantic `BaseSettings` (env vars: `LLM_PROVIDER`, `GEMINI_API_KEY`, `CORS_ORIGINS`, etc.)
-- `app/routers/chat.py` — `POST /api/chat`, `GET /api/stats`
-- `app/services/llm_service.py` — Abstract `LLMProvider` with `OllamaProvider` (local/dev) and `GeminiProvider` (cloud/prod) implementations; factory selects based on `LLM_PROVIDER` env var
+- `app/routers/chat.py` — `POST /api/chat` (non-streaming), `POST /api/chat/stream` (SSE streaming), `GET /api/stats`
+- `app/services/llm_service.py` — Abstract `LLMProvider` with `OllamaProvider`, `GeminiProvider`, `GroqProvider`; each implements both `generate()` (sync) and `generate_stream()` (async generator). Factory selects based on `LLM_PROVIDER` env var
 - `app/services/rag_service.py` — ChromaDB vector store; collection `portfolio_knowledge`; retrieves top-3 docs by default
 - `data/personal_data.json` — Knowledge base (6 documents); re-ingest after editing via `ingest_data.py`
 
-**RAG flow:** `POST /api/chat` → retrieve context (k=3 from ChromaDB) → inject into LLM prompt → return response with sources.
+**RAG flow (streaming):** `POST /api/chat/stream` → `asyncio.to_thread(rag_service.retrieve)` → stream tokens via `StreamingResponse` (SSE) → final `done` event carries `conversation_id`, `sources`, `model_used`.
 
-**LLM strategy:** Ollama (local, no API key) for development; Gemini (free tier) for production. Switch via `LLM_PROVIDER=ollama|gemini`.
+**RAG flow (non-streaming):** `POST /api/chat` → retrieve context (k=3) → inject into LLM prompt → return full `ChatResponse`.
+
+**LLM strategy:** Ollama (local, no API key) for development; Groq (free tier, 14,400 RPD) for production. Switch via `LLM_PROVIDER=ollama|groq|gemini`.
+
+**Async rules:** All `generate_stream` methods use async SDK clients (`ollama.AsyncClient`, `AsyncGroq`, `generate_content_async`). Blocking calls (ChromaDB) are wrapped with `asyncio.to_thread()`. Do NOT use sync clients inside `async def` endpoints.

@@ -19,7 +19,7 @@ Package manager is **pnpm** (v10.11.1). Node version is pinned in `.nvmrc` (v22.
 
 **Framework:** Nuxt 3 with Vue 3 Composition API (`<script setup lang="ts">`) and TypeScript.
 
-**Rendering:** Single-page app structure — `app.vue` renders `<BgGradient>` (animated background) and `<NuxtPage>`, with `pages/index.vue` as the only page. No layouts directory; no middleware; no composables directory (only built-in Nuxt auto-imports used).
+**Rendering:** Single-page app structure — `app.vue` renders `<BgGradient>` (animated background) and `<NuxtPage>`. Pages: `pages/index.vue` (portfolio), `pages/chat.vue` (streaming chatbot). No layouts directory; no middleware; no composables directory (only built-in Nuxt auto-imports used).
 
 **Styling:** TailwindCSS v4 loaded as a Vite plugin (`@tailwindcss/vite`). Custom theme variables (colors, sizes) are defined in `assets/css/tailwind.css` using CSS `@theme`. Global font (Playfair Display) is set in `assets/css/main.css`.
 
@@ -32,6 +32,13 @@ Package manager is **pnpm** (v10.11.1). Node version is pinned in `.nvmrc` (v22.
 **Modules:** `@nuxt/image` for image optimization, `@nuxt/icon` for Iconify icons.
 
 **Data:** All content (experiences, about text) is hardcoded in components — no CMS, API, or data layer.
+
+**Chat page (`pages/chat.vue`):** Uses native `fetch()` + `ReadableStream` to consume SSE from `POST /api/chat/stream`. Key patterns:
+- `SSEEvent` discriminated union (`chunk | done | error`) for type-safe event handling
+- `TextDecoder` with `{ stream: true }` + line-split buffer for chunk-boundary-safe parsing
+- `reader` declared outside `try`, cancelled via `reader?.cancel()` in `finally` to release the stream on all exit paths
+- Empty assistant message with `streaming: true` pushed before fetch; tokens appended in-place; `streaming` cleared on `done`/`error`
+- Do NOT use `$fetch` for streaming — it buffers the full response. Use native `fetch()`.
 
 ## Design Tokens (`assets/css/tailwind.css`)
 
