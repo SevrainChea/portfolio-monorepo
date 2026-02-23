@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "link:glace": "pnpm link --global @glace-ui/core @glace-ui/vue",
+    "unlink:glace": "pnpm uninstall @glace-ui/core @glace-ui/vue && pnpm install"
   },
   "dependencies": {
     "@nuxt/icon": "1.13.0",
