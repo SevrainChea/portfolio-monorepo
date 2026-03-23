@@ -12,6 +12,7 @@
     "unlink:glace": "pnpm uninstall @glace-ui/core @glace-ui/vue && pnpm install"
   },
   "dependencies": {
+    "@glace-ui/vue": "^0.1.3",
     "@nuxt/icon": "1.13.0",
     "@nuxt/image": "1.10.0",
     "@tailwindcss/vite": "^4.1.8",
