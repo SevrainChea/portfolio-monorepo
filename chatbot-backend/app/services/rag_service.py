@@ -6,7 +6,7 @@ from app.config import settings
 import hashlib
 
 
-RELEVANCE_THRESHOLD = 0.2
+RELEVANCE_THRESHOLD = 0.4
 
 
 class RAGService:
@@ -19,10 +19,10 @@ class RAGService:
             settings=ChromaSettings(anonymized_telemetry=False)
         )
         
-        # Get or create collection
+        # Get or create collection with cosine distance for proper similarity scoring
         self.collection = self.client.get_or_create_collection(
             name="portfolio_knowledge",
-            metadata={"description": "Personal portfolio information"}
+            metadata={"hnsw:space": "cosine"}
         )
         
         logger.info("ChromaDB initialized with {} documents", self.collection.count())
@@ -79,9 +79,9 @@ class RAGService:
         if results["documents"] and results["documents"][0]:
             distances = results["distances"][0] if results.get("distances") else []
             for i, doc in enumerate(results["documents"][0]):
-                # Convert cosine distance to similarity score (cosine distance range is [0, 2])
-                distance = distances[i] if i < len(distances) else 2.0
-                relevance = (2 - distance) / 2  # Normalize to [0, 1]
+                # Cosine distance: 0 = identical, 1 = orthogonal; similarity = 1 - distance
+                distance = distances[i] if i < len(distances) else 1.0
+                relevance = 1 - distance
 
                 # Filter by relevance threshold
                 if relevance >= RELEVANCE_THRESHOLD:
@@ -98,7 +98,7 @@ class RAGService:
         self.client.delete_collection("portfolio_knowledge")
         self.collection = self.client.get_or_create_collection(
             name="portfolio_knowledge",
-            metadata={"description": "Personal portfolio information"}
+            metadata={"hnsw:space": "cosine"}
         )
         logger.info("Cleared all documents")
     

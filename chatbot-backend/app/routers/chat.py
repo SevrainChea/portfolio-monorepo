@@ -58,6 +58,7 @@ async def chat_stream(request: ChatRequest):
             context_docs = await asyncio.to_thread(
                 rag_service.retrieve, request.message, 5
             )
+            print(f"Retrieved {len(context_docs)} context documents for streaming response")
             sources = list(set(doc["source"] for doc in context_docs))
             conversation_id = request.conversation_id or str(uuid.uuid4())
             model_used = llm_service.provider.get_model_name()
