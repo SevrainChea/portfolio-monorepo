@@ -1,29 +1,75 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-playfair-display: "Playfair Display", serif;
 
-  --color-primary: rgb(187, 163, 200);
-  /* --color-primary: rgb(131, 208, 184); */
+  --color-primary: var(--th-primary);
 
-  --color-fg-light: rgb(255, 255, 255);
-  --color-fg-accent: rgb(60, 185, 255);
-  --color-fg-highlight: rgb(250, 33, 124);
-  --color-fg-muted: rgb(202, 205, 220);
+  --color-fg-light: var(--th-fg-light);
+  --color-fg-accent: var(--th-fg-accent);
+  --color-fg-highlight: var(--th-fg-highlight);
+  --color-fg-muted: var(--th-fg-muted);
 
-  --color-primary-bg1: rgb(25, 35, 60);
-  --color-primary-bg2: rgb(45, 25, 55);
-  --color-primary-bg3: rgb(35, 25, 45);
+  --color-primary-bg1: var(--th-primary-bg1);
+  --color-primary-bg2: var(--th-primary-bg2);
+  --color-primary-bg3: var(--th-primary-bg3);
 
-  --color-circle1: 35, 75, 130; /* cool slate blue */
-  --color-circle2: 155, 40, 95; /* cool burgundy */
-  --color-circle3: 85, 40, 145; /* cool violet */
-  --color-circle4: 25, 115, 105; /* cool teal */
-  --color-circle5: 175, 85, 35; /* cool amber */
+  --color-circle1: var(--th-circle1);
+  --color-circle2: var(--th-circle2);
+  --color-circle3: var(--th-circle3);
+  --color-circle4: var(--th-circle4);
+  --color-circle5: var(--th-circle5);
 
-  --color-interactive: 50, 130, 195; /* cool sky */
-  --color-test: rgb(163, 160, 160);
+  --color-interactive: var(--th-interactive);
   --circle-size: 90%;
-  --blending: overlay;
+  --blending: var(--th-blending);
+}
+
+/* ─── Dark palette (default) ─── */
+:root {
+  --th-primary: rgb(187, 163, 200);
+
+  --th-fg-light: rgb(255, 255, 255);
+  --th-fg-accent: rgb(60, 185, 255);
+  --th-fg-highlight: rgb(250, 33, 124);
+  --th-fg-muted: rgb(202, 205, 220);
+
+  --th-primary-bg1: rgb(25, 35, 60);
+  --th-primary-bg2: rgb(45, 25, 55);
+  --th-primary-bg3: rgb(35, 25, 45);
+
+  --th-circle1: 35, 75, 130;
+  --th-circle2: 155, 40, 95;
+  --th-circle3: 85, 40, 145;
+  --th-circle4: 25, 115, 105;
+  --th-circle5: 175, 85, 35;
+
+  --th-interactive: 50, 130, 195;
+  --th-blending: overlay;
+}
+
+/* ─── Light palette ─── */
+:root:not(.dark) {
+  --th-primary: rgb(120, 80, 150);
+
+  --th-fg-light: rgb(30, 30, 45);
+  --th-fg-accent: rgb(20, 120, 200);
+  --th-fg-highlight: rgb(200, 20, 100);
+  --th-fg-muted: rgb(80, 85, 105);
+
+  --th-primary-bg1: rgb(215, 220, 235);
+  --th-primary-bg2: rgb(225, 215, 235);
+  --th-primary-bg3: rgb(235, 230, 240);
+
+  --th-circle1: 120, 160, 220;
+  --th-circle2: 210, 130, 170;
+  --th-circle3: 160, 130, 210;
+  --th-circle4: 110, 195, 185;
+  --th-circle5: 220, 170, 120;
+
+  --th-interactive: 130, 190, 240;
+  --th-blending: soft-light;
 }

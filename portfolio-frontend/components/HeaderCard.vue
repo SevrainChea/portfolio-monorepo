@@ -23,14 +23,17 @@
           <h1 class="truncate text-base font-bold text-white">Sévrain CHEA</h1>
         </div>
       </Transition>
-      <button
-        @click="mobileMenuOpen = !mobileMenuOpen"
-        class="hover:text-fg-highlight ml-auto flex flex-shrink-0 items-center font-bold text-white transition-colors duration-300"
-        :aria-expanded="mobileMenuOpen"
-        aria-label="Toggle navigation menu"
-      >
-        <Icon :name="mobileMenuOpen ? 'mdi:close' : 'mdi:menu'" size="24" />
-      </button>
+      <div class="ml-auto flex flex-shrink-0 items-center gap-3">
+        <DarkModeToggle size="20" />
+        <button
+          @click="mobileMenuOpen = !mobileMenuOpen"
+          class="hover:text-fg-highlight flex items-center font-bold text-white transition-colors duration-300"
+          :aria-expanded="mobileMenuOpen"
+          aria-label="Toggle navigation menu"
+        >
+          <Icon :name="mobileMenuOpen ? 'mdi:close' : 'mdi:menu'" size="24" />
+        </button>
+      </div>
     </div>
 
     <!-- Mobile Content Padding for Fixed Header -->
@@ -110,7 +113,7 @@
 
       <!-- Desktop Navigation -->
       <nav class="block">
-        <ul class="my-8 flex flex-col gap-6">
+        <ul class="my-8 flex flex-col gap-4">
           <li>
             <NavLink href="#about">About</NavLink>
           </li>
@@ -118,13 +121,15 @@
             <NavLink href="#experiences">Experiences</NavLink>
           </li>
           <!-- <li>
-            <NavLink href="#projects">Projects</NavLink>
+              <NavLink href="#projects">Projects</NavLink>
           </li> -->
           <li>
             <NavLink href="/chat">Chat</NavLink>
           </li>
         </ul>
       </nav>
+
+      <DarkModeToggle size="22" class="mb-4" />
 
       <FooterSection class="mt-auto px-0" />
     </div>

@@ -9,4 +9,23 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { useGlaceTheme } from "@glace-ui/vue";
+import { watch } from "vue";
+
+const { isDark } = useGlaceTheme({
+  darkMode: true,
+});
+
+watch(
+  isDark,
+  (dark) => {
+    if (!document) return;
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
+  },
+  { immediate: true },
+);
+</script>
+
 <style></style>
