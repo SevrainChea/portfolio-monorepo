@@ -35,6 +35,12 @@
 <script setup lang="ts">
 onMounted(() => {
   const interBubble = document.querySelector<HTMLDivElement>(".interactive")!;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (prefersReducedMotion) return;
+
   let curX = 0;
   let curY = 0;
   let tgX = 0;
@@ -191,6 +197,13 @@ onMounted(() => {
     left: -50%;
 
     opacity: 0.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .circle,
+    .interactive {
+      animation: none;
+    }
   }
 }
 </style>

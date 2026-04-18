@@ -5,6 +5,7 @@
     :glassOnHover="true"
     :href="companyLink"
     target="_blank"
+    rel="noopener noreferrer"
   >
     <div class="flex flex-col items-center">
       <div v-for="date in dates">

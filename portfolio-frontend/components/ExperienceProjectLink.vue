@@ -2,6 +2,7 @@
   <NuxtLink
     :to="props.url"
     target="_blank"
+    rel="noopener noreferrer"
     class="hover:text-fg-highlight text-fg-muted inline-flex items-center gap-1 transition-colors"
   >
     <Icon name="uil:link" />
