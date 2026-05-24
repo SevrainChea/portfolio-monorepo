@@ -1,3 +1,7 @@
+<script setup>
+import { Analytics } from "@vercel/analytics/nuxt";
+</script>
+
 <template>
   <div class="">
     <BgGradient />
@@ -6,6 +10,7 @@
     >
       <NuxtPage />
     </div>
+    <Analytics />
   </div>
 </template>
 
