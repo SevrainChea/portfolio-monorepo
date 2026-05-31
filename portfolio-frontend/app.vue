@@ -8,30 +8,25 @@
 <script setup lang="ts">
 import { watch } from "vue";
 
-// useTheme() owns the theme state; these drive the root <html> attributes.
-const { family, currentVariant, currentMode, isDark } = useTheme();
+// The initial <html> theme attributes are written by a render-blocking inline
+// script (see nuxt.config app.head) so a stored non-default theme paints
+// correctly on the first frame — no flash of the default. Here we only keep
+// those attributes in sync with reactive state for live theme changes.
+// immediate:false so we never overwrite the script's values with the SSR
+// defaults before localStorage hydration (which happens in useTheme onMounted).
+const { family, currentVariant, currentMode } = useTheme();
 
-// data-* attributes + the initial SSR class come from useHead (attribute-value
-// changes reconcile reliably through unhead).
-useHead({
-  htmlAttrs: {
-    "data-family": () => family.value,
-    "data-variant": () => currentVariant.value,
-    class: () => (currentMode.value === "dark" ? "dark" : ""),
-    style: () => `color-scheme:${currentMode.value}`,
-  },
-});
-
-// unhead does NOT reliably REMOVE the `.dark` class token on a reactive update
-// (switching to light left the page dark). Toggle it imperatively on the client
-// to guarantee correctness. Runs after hydration, so there is no SSR mismatch.
 if (import.meta.client) {
   watch(
-    isDark,
-    (dark) => {
-      document.documentElement.classList.toggle("dark", dark);
+    [family, currentVariant, currentMode],
+    ([f, v, m]) => {
+      const el = document.documentElement;
+      el.setAttribute("data-family", f);
+      el.setAttribute("data-variant", v);
+      el.classList.toggle("dark", m === "dark");
+      el.style.colorScheme = m;
     },
-    { immediate: true },
+    { immediate: false },
   );
 }
 </script>

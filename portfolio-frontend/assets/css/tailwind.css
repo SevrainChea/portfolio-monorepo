@@ -42,6 +42,7 @@
 
 /* Fallback (used pre-hydration / if no attributes) = Aurora · Cobalt · dark. */
 :root {
+  color-scheme: dark;
   --th-bg: #06080f;
   --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #0f1c3a 0%, #080c18 52%, #05070f 100%);
   --th-ink: #f2f6ff;

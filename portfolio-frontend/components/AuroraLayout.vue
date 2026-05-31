@@ -222,7 +222,10 @@ function positionLine(xp: Experience): string {
   background: var(--th-tag-bg);
   border: 1px solid var(--th-tag-border);
   color: var(--th-muted);
-  transition: all 0.25s;
+  transition:
+    color 0.25s,
+    background 0.25s,
+    border-color 0.25s;
 }
 .aurora-root .socials a:hover {
   color: var(--th-bg);

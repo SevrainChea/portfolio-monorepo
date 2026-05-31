@@ -1,19 +1,24 @@
 <template>
-  <div
-    class="ph-switch"
-    :class="{ 'is-mobile': isMobile, cond: condensed }"
-    :data-chrome="currentMode"
-    :style="{ '--acc': accent }"
-  >
+  <div class="ph-switch" :class="{ cond: condensed }">
     <div class="ph-row">
       <!-- Family selector + dropdown -->
-      <div class="fam" :class="{ open: menuOpen }" @click.stop="menuOpen = !menuOpen">
-        <span class="lbl">Theme</span>
-        <span class="val">{{ currentFamily.name }}<span class="chev">▾</span></span>
-        <div v-if="menuOpen" class="ph-menu" @click.stop>
+      <div class="fam" :class="{ open: menuOpen }">
+        <button
+          type="button"
+          class="fam-trigger"
+          aria-haspopup="menu"
+          :aria-expanded="menuOpen"
+          @click.stop="menuOpen = !menuOpen"
+        >
+          <span class="lbl">Theme</span>
+          <span class="val">{{ currentFamily.name }}<span class="chev">▾</span></span>
+        </button>
+        <div v-if="menuOpen" class="ph-menu" role="menu" @click.stop>
           <button
             v-for="f in families"
             :key="f.id"
+            type="button"
+            role="menuitem"
             @click="pickFamily(f.id)"
           >
             <span
@@ -24,7 +29,14 @@
             <span v-if="f.id === family" class="ck">✓</span>
             <span v-else class="msub">{{ f.sub }}</span>
           </button>
-          <button v-for="u in upcoming" :key="u.id" class="soon" disabled>
+          <button
+            v-for="u in upcoming"
+            :key="u.id"
+            type="button"
+            role="menuitem"
+            class="soon"
+            disabled
+          >
             <span class="dot dot-muted" />
             <span class="mname">{{ u.name }}</span>
             <span class="badge">Soon</span>
@@ -34,44 +46,49 @@
 
       <div class="sep" />
 
-      <!-- Variant swatches -->
+      <!-- Variant swatches. Active ring + dot colors are CSS-driven off the
+           <html> data-variant / .dark attributes (set pre-paint by the inline
+           theme script), so they never flash the default on reload. -->
       <div class="swatches">
         <button
           v-for="v in currentFamily.variants"
           :key="v.id"
           class="sw"
-          :class="{ active: v.id === currentVariant }"
+          :data-variant="v.id"
           :aria-label="v.name"
+          :aria-pressed="v.id === currentVariant"
           @click="setVariant(v.id)"
         >
-          <span class="dot" :style="swatchGradient(v.swatch[currentMode])" />
+          <span class="dot" :style="swatchVars(v.swatch)" />
           <span class="tip">{{ v.name }}</span>
         </button>
       </div>
 
       <div class="sep" />
 
-      <!-- Light / dark toggle -->
+      <!-- Light / dark toggle. Both icons render; CSS shows the right one based
+           on the .dark class, so the icon is correct on the first frame. -->
       <button
         class="mode"
         :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
         @click="toggleMode"
       >
-        <Icon :name="isDark ? 'uil:sun' : 'uil:moon'" size="17" />
+        <Icon name="uil:sun" class="ic ic-sun" size="17" aria-hidden="true" />
+        <Icon name="uil:moon" class="ic ic-moon" size="17" aria-hidden="true" />
       </button>
     </div>
 
     <!-- Mobile-only condensed nav row -->
     <nav class="ph-nav">
       <div class="mini">
-        <img :src="data.photo" :alt="data.name" :style="{ borderColor: accent }" />
+        <img :src="data.photo" :alt="data.name" />
         <span class="nm">{{ data.name }}</span>
       </div>
       <NuxtLink
         v-for="(item, i) in data.nav"
         :key="item.href"
         :to="linkTo(item.href)"
-        :style="i === 0 ? { color: accent } : undefined"
+        :class="{ active: i === 0 }"
         @click="menuOpen = false"
       >
         {{ item.label }}
@@ -81,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { UPCOMING_FAMILIES, type FamilyId } from "~/composables/useTheme";
 
 const data = usePortfolioData();
@@ -92,7 +109,6 @@ const {
   currentVariant,
   currentMode,
   isDark,
-  accent,
   setFamily,
   setVariant,
   toggleMode,
@@ -101,12 +117,20 @@ const {
 const upcoming = UPCOMING_FAMILIES;
 const menuOpen = ref(false);
 const condensed = ref(false);
-const winW = ref(1200); // desktop default for SSR; corrected on mount
 
-const isMobile = computed(() => winW.value <= currentFamily.value.breakpoint);
-
+// Single gradient — used by the family dropdown, which only renders once opened
+// (post-mount), so it can safely depend on reactive currentMode.
 function swatchGradient([c0, c1]: [string, string]) {
   return { background: `linear-gradient(135deg, ${c0} 45%, ${c1} 45%)` };
+}
+
+// Both mode gradients as static custom props; CSS picks one off the .dark class
+// (set pre-paint by the inline script), so swatch colors never flash on reload.
+function swatchVars(swatch: { dark: [string, string]; light: [string, string] }) {
+  return {
+    "--sw-d": `linear-gradient(135deg, ${swatch.dark[0]} 45%, ${swatch.dark[1]} 45%)`,
+    "--sw-l": `linear-gradient(135deg, ${swatch.light[0]} 45%, ${swatch.light[1]} 45%)`,
+  };
 }
 
 function linkTo(href: string) {
@@ -118,21 +142,22 @@ function pickFamily(id: FamilyId) {
   menuOpen.value = false;
 }
 
-const onResize = () => (winW.value = window.innerWidth);
 const onScroll = () => (condensed.value = window.scrollY > 96);
 const onDocClick = () => (menuOpen.value = false);
+const onKeydown = (e: KeyboardEvent) => {
+  if (e.key === "Escape") menuOpen.value = false;
+};
 
 onMounted(() => {
-  onResize();
   onScroll();
-  window.addEventListener("resize", onResize);
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("click", onDocClick);
+  window.addEventListener("keydown", onKeydown);
 });
 onUnmounted(() => {
-  window.removeEventListener("resize", onResize);
   window.removeEventListener("scroll", onScroll);
   window.removeEventListener("click", onDocClick);
+  window.removeEventListener("keydown", onKeydown);
 });
 </script>
 
@@ -149,19 +174,23 @@ onUnmounted(() => {
   border-radius: 999px;
   font-family: var(--font-inter);
   box-shadow: 0 10px 34px -16px rgba(0, 0, 0, 0.7);
+  /* accent follows the active theme token (set pre-paint via <html> attrs) */
+  --acc: var(--th-accent);
   transition:
     background 0.45s ease,
     border-color 0.45s ease,
     color 0.45s ease;
 }
-.ph-switch[data-chrome="dark"] {
+/* Chrome (glass) is driven by the .dark class on <html>, which the pre-paint
+   inline script sets — so the pill never flashes the wrong chrome on reload. */
+:global(html.dark) .ph-switch {
   background: rgba(13, 15, 21, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.16);
   color: #fff;
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
-.ph-switch[data-chrome="light"] {
+:global(html:not(.dark)) .ph-switch {
   background: rgba(252, 251, 248, 0.93);
   border: 1px solid rgba(20, 20, 30, 0.12);
   color: #171310;
@@ -175,9 +204,17 @@ onUnmounted(() => {
 
 .fam {
   position: relative;
+}
+.fam-trigger {
   display: flex;
   align-items: center;
   gap: 9px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
   cursor: pointer;
   user-select: none;
 }
@@ -209,10 +246,10 @@ onUnmounted(() => {
   width: 1px;
   height: 22px;
 }
-.ph-switch[data-chrome="dark"] .sep {
+:global(html.dark) .ph-switch .sep {
   background: rgba(255, 255, 255, 0.18);
 }
-.ph-switch[data-chrome="light"] .sep {
+:global(html:not(.dark)) .ph-switch .sep {
   background: rgba(20, 20, 30, 0.14);
 }
 
@@ -242,10 +279,22 @@ onUnmounted(() => {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
   transition: transform 0.2s;
 }
+/* swatch dot color: dark gradient by default, light gradient when html is light */
+.sw .dot {
+  background: var(--sw-d);
+}
+:global(html:not(.dark)) .sw .dot {
+  background: var(--sw-l);
+}
 .sw:hover .dot {
   transform: scale(1.14);
 }
-.sw.active {
+/* active ring: matches the active variant via <html data-variant>.
+   Variant ids are Aurora's; extend this list when more families ship. */
+:global(html[data-variant="cobalt"]) .sw[data-variant="cobalt"],
+:global(html[data-variant="emerald"]) .sw[data-variant="emerald"],
+:global(html[data-variant="amethyst"]) .sw[data-variant="amethyst"],
+:global(html[data-variant="garnet"]) .sw[data-variant="garnet"] {
   box-shadow: 0 0 0 2px var(--acc);
   border-radius: 50%;
 }
@@ -265,12 +314,12 @@ onUnmounted(() => {
     opacity 0.18s,
     transform 0.18s;
 }
-.ph-switch[data-chrome="dark"] .sw .tip {
+:global(html.dark) .ph-switch .sw .tip {
   color: #fff;
   background: rgba(8, 9, 13, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
-.ph-switch[data-chrome="light"] .sw .tip {
+:global(html:not(.dark)) .ph-switch .sw .tip {
   color: #171310;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(20, 20, 30, 0.12);
@@ -291,19 +340,40 @@ onUnmounted(() => {
   place-items: center;
   padding: 0;
   background: transparent;
-  transition: all 0.25s;
+  transition:
+    border-color 0.25s,
+    color 0.25s;
 }
-.ph-switch[data-chrome="dark"] .mode {
+:global(html.dark) .ph-switch .mode {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
 }
-.ph-switch[data-chrome="light"] .mode {
+:global(html:not(.dark)) .ph-switch .mode {
   border: 1px solid rgba(20, 20, 30, 0.18);
   color: #171310;
 }
 .mode:hover {
   border-color: var(--acc);
   color: var(--acc);
+}
+/* sun shown in dark (switch to light), moon shown in light (switch to dark) */
+.mode .ic-moon {
+  display: none;
+}
+:global(html:not(.dark)) .mode .ic-sun {
+  display: none;
+}
+:global(html:not(.dark)) .mode .ic-moon {
+  display: inline-flex;
+}
+
+/* Keyboard focus indicator for all interactive controls */
+.fam-trigger:focus-visible,
+.sw:focus-visible,
+.mode:focus-visible,
+.ph-menu button:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
 }
 
 /* Dropdown menu */
@@ -319,12 +389,12 @@ onUnmounted(() => {
   gap: 2px;
   z-index: 70;
 }
-.ph-switch[data-chrome="dark"] .ph-menu {
+:global(html.dark) .ph-switch .ph-menu {
   background: rgba(15, 17, 23, 0.97);
   border: 1px solid rgba(255, 255, 255, 0.13);
   box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.8);
 }
-.ph-switch[data-chrome="light"] .ph-menu {
+:global(html:not(.dark)) .ph-switch .ph-menu {
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(20, 20, 30, 0.1);
   box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.32);
@@ -342,10 +412,10 @@ onUnmounted(() => {
   width: 100%;
   transition: background 0.15s;
 }
-.ph-switch[data-chrome="dark"] .ph-menu button:hover {
+:global(html.dark) .ph-switch .ph-menu button:hover {
   background: rgba(255, 255, 255, 0.07);
 }
-.ph-switch[data-chrome="light"] .ph-menu button:hover {
+:global(html:not(.dark)) .ph-switch .ph-menu button:hover {
   background: rgba(20, 20, 30, 0.05);
 }
 .ph-menu button .dot {
@@ -405,7 +475,7 @@ onUnmounted(() => {
   border-radius: 50%;
   object-fit: cover;
   flex: 0 0 auto;
-  border: 1px solid currentColor;
+  border: 1px solid var(--th-accent);
 }
 .mini .nm {
   font-family: var(--font-playfair-display);
@@ -416,105 +486,112 @@ onUnmounted(() => {
   text-overflow: ellipsis;
 }
 
-/* ════════ MOBILE: full-width sticky header ════════ */
-.ph-switch.is-mobile {
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 0;
-  border-width: 0 0 1px;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  padding: 0;
-  box-shadow: 0 6px 22px -14px rgba(0, 0, 0, 0.7);
-}
-.ph-switch.is-mobile .ph-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 13px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 14px;
-  position: relative;
-}
-.ph-switch.is-mobile .fam {
-  flex: 0 0 auto;
-}
-.ph-switch.is-mobile .fam .lbl {
-  display: none;
-}
-.ph-switch.is-mobile .sw {
-  width: 25px;
-  height: 25px;
-}
-.ph-switch.is-mobile .sw .dot {
-  width: 19px;
-  height: 19px;
-}
-.ph-switch.is-mobile .sw .tip {
-  display: none;
-}
-.ph-switch.is-mobile .mode {
-  width: 33px;
-  height: 33px;
-}
-.ph-switch.is-mobile .ph-menu {
-  top: 46px;
-  left: 0;
-}
-.ph-switch.is-mobile .ph-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  padding: 0 12px;
-  transition:
-    max-height 0.3s ease,
-    opacity 0.26s ease,
-    padding 0.3s ease;
-}
-.ph-switch.is-mobile.cond .ph-nav {
-  max-height: 56px;
-  opacity: 1;
-  padding: 8px 12px;
-  border-top: 1px solid;
-}
-.ph-switch.is-mobile[data-chrome="dark"].cond .ph-nav {
-  border-top-color: rgba(255, 255, 255, 0.12);
-}
-.ph-switch.is-mobile[data-chrome="light"].cond .ph-nav {
-  border-top-color: rgba(20, 20, 30, 0.1);
-}
-.ph-switch.is-mobile .ph-nav .mini {
-  flex: 0 0 auto;
-}
-.ph-switch.is-mobile .ph-nav .mini .nm {
-  max-width: 92px;
-}
-.ph-switch.is-mobile .ph-nav a {
-  flex: 1;
-  text-align: center;
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-  color: inherit;
-  padding: 8px 6px;
-  border-radius: 8px;
-  transition: background 0.15s;
-}
-.ph-switch.is-mobile[data-chrome="dark"] .ph-nav a {
-  background: rgba(255, 255, 255, 0.06);
-}
-.ph-switch.is-mobile[data-chrome="light"] .ph-nav a {
-  background: rgba(20, 20, 30, 0.05);
+/* ════════ MOBILE: switcher becomes a full-width sticky header ════════ */
+/* Breakpoint matches Aurora's registry breakpoint (880). CSS-driven (not JS)
+   so there's no desktop-pill flash on narrow viewports. */
+@media (max-width: 880px) {
+  .ph-switch {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+    border-width: 0 0 1px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    box-shadow: 0 6px 22px -14px rgba(0, 0, 0, 0.7);
+  }
+  .ph-switch .ph-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    position: relative;
+  }
+  .ph-switch .fam {
+    flex: 0 0 auto;
+  }
+  .ph-switch .fam .lbl {
+    display: none;
+  }
+  .ph-switch .sw {
+    width: 25px;
+    height: 25px;
+  }
+  .ph-switch .sw .dot {
+    width: 19px;
+    height: 19px;
+  }
+  .ph-switch .sw .tip {
+    display: none;
+  }
+  .ph-switch .mode {
+    width: 33px;
+    height: 33px;
+  }
+  .ph-switch .ph-menu {
+    top: 46px;
+    left: 0;
+  }
+  .ph-switch .ph-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    padding: 0 12px;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.26s ease,
+      padding 0.3s ease;
+  }
+  .ph-switch.cond .ph-nav {
+    max-height: 56px;
+    opacity: 1;
+    padding: 8px 12px;
+    border-top: 1px solid;
+  }
+  :global(html.dark) .ph-switch.cond .ph-nav {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+  :global(html:not(.dark)) .ph-switch.cond .ph-nav {
+    border-top-color: rgba(20, 20, 30, 0.1);
+  }
+  .ph-switch .ph-nav .mini {
+    flex: 0 0 auto;
+  }
+  .ph-switch .ph-nav .mini .nm {
+    max-width: 92px;
+  }
+  .ph-switch .ph-nav a {
+    flex: 1;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    color: inherit;
+    padding: 8px 6px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .ph-switch .ph-nav a.active {
+    color: var(--th-accent);
+  }
+  :global(html.dark) .ph-switch .ph-nav a {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  :global(html:not(.dark)) .ph-switch .ph-nav a {
+    background: rgba(20, 20, 30, 0.05);
+  }
 }
 </style>
