@@ -1,6 +1,6 @@
 <template>
   <button
-    @click="toggleDarkMode"
+    @click="toggleMode"
     class="text-fg-muted hover:text-fg-highlight flex cursor-pointer items-center justify-center transition-colors duration-300"
     :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
   >
@@ -20,8 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { useGlaceTheme } from "@glace-ui/vue";
-
 withDefaults(
   defineProps<{
     size?: string;
@@ -31,5 +29,5 @@ withDefaults(
   },
 );
 
-const { isDark, toggleDarkMode } = useGlaceTheme();
+const { isDark, toggleMode } = useTheme();
 </script>
