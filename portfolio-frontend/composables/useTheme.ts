@@ -1,80 +1,30 @@
 // Reactive, persisted theme state for the multi-theme portfolio.
 //
-// Axes: family → variant → mode. Today only the Aurora family is registered;
-// adding a family later is: (1) a token block in tailwind.css, (2) a
-// <XLayout>.vue, (3) an entry in THEME_REGISTRY below.
+// Axes: family → variant → mode. The registry, storage keys, and per-family
+// defaults live in the dependency-free `~/theme-registry` module so they are
+// shared with nuxt.config's pre-paint FOUC script and can't drift.
 //
 // The active family/variant/mode are written onto <html> as
-// `data-family` / `data-variant` / `.dark` (via useHead, so they are present
-// during SSR too). Every component keeps reading CSS `var(--th-*)` tokens,
-// which resolve to whichever selector block matches those attributes.
+// `data-family` / `data-variant` / `.dark` (by the inline script before paint
+// and by app.vue's watcher thereafter). Components read CSS `var(--th-*)`
+// tokens, which resolve to whichever selector block matches those attributes.
 
 import { computed, onMounted } from "vue";
+import {
+  THEME_REGISTRY,
+  STORAGE_KEYS,
+  type FamilyId,
+  type Mode,
+} from "~/theme-registry";
 
-export type FamilyId = "aurora"; // | "neon" | "editorial" | "blueprint"
-export type Mode = "dark" | "light";
-
-export interface VariantDef {
-  id: string;
-  name: string;
-  /** [primary, accent] gradient per mode — used for the switcher swatch. */
-  swatch: { dark: [string, string]; light: [string, string] };
-}
-
-export interface FamilyDef {
-  id: FamilyId;
-  name: string;
-  sub: string;
-  defaultVariant: string;
-  defaultMode: Mode;
-  variants: VariantDef[];
-  /** Width (px) at/under which this family collapses to its mobile layout. */
-  breakpoint: number;
-}
-
-export const THEME_REGISTRY: Record<FamilyId, FamilyDef> = {
-  aurora: {
-    id: "aurora",
-    name: "Aurora",
-    sub: "Frameless",
-    defaultVariant: "cobalt",
-    defaultMode: "dark",
-    breakpoint: 880,
-    variants: [
-      {
-        id: "cobalt",
-        name: "Cobalt & Frost",
-        swatch: { dark: ["#2b5bff", "#5ad1ff"], light: ["#8fb0ff", "#1f6fe0"] },
-      },
-      {
-        id: "emerald",
-        name: "Emerald & Brass",
-        swatch: { dark: ["#2f8f5c", "#cea954"], light: ["#7fc99a", "#8a6a1c"] },
-      },
-      {
-        id: "amethyst",
-        name: "Amethyst & Rose",
-        swatch: { dark: ["#7c3aed", "#ef8fb3"], light: ["#b98fe6", "#c43f72"] },
-      },
-      {
-        id: "garnet",
-        name: "Garnet & Ember",
-        swatch: { dark: ["#d9433f", "#ef9a55"], light: ["#f0a08f", "#c2502a"] },
-      },
-    ],
-  },
-};
-
-/** Families not yet implemented — shown disabled in the switcher dropdown. */
-export const UPCOMING_FAMILIES = [
-  { id: "neon", name: "Neon" },
-  { id: "editorial", name: "Editorial" },
-  { id: "blueprint", name: "Blueprint" },
-] as const;
-
-const FAMILY_KEY = "pf-family";
-const VARIANTS_KEY = "pf-variants";
-const MODES_KEY = "pf-modes";
+// Re-export so components can import everything theme-related from one place.
+export {
+  THEME_REGISTRY,
+  UPCOMING_FAMILIES,
+  ALL_VARIANT_IDS,
+  STORAGE_KEYS,
+} from "~/theme-registry";
+export type { FamilyId, Mode, VariantDef, FamilyDef } from "~/theme-registry";
 
 function loadString(key: string, fallback: string): string {
   if (!import.meta.client) return fallback;
@@ -113,11 +63,11 @@ export function useTheme() {
     onMounted(() => {
       if (hydrated.value) return;
       hydrated.value = true;
-      const storedFamily = loadString(FAMILY_KEY, "aurora");
+      const storedFamily = loadString(STORAGE_KEYS.family, "aurora");
       if (storedFamily in THEME_REGISTRY)
         family.value = storedFamily as FamilyId;
-      variants.value = loadJSON<Record<string, string>>(VARIANTS_KEY, {});
-      modes.value = loadJSON<Record<string, Mode>>(MODES_KEY, {});
+      variants.value = loadJSON<Record<string, string>>(STORAGE_KEYS.variants, {});
+      modes.value = loadJSON<Record<string, Mode>>(STORAGE_KEYS.modes, {});
       const mm = window.matchMedia;
       systemMode.value = mm("(prefers-color-scheme: dark)").matches
         ? "dark"
@@ -152,9 +102,9 @@ export function useTheme() {
   function persist() {
     if (!import.meta.client) return;
     try {
-      localStorage.setItem(FAMILY_KEY, family.value);
-      localStorage.setItem(VARIANTS_KEY, JSON.stringify(variants.value));
-      localStorage.setItem(MODES_KEY, JSON.stringify(modes.value));
+      localStorage.setItem(STORAGE_KEYS.family, family.value);
+      localStorage.setItem(STORAGE_KEYS.variants, JSON.stringify(variants.value));
+      localStorage.setItem(STORAGE_KEYS.modes, JSON.stringify(modes.value));
     } catch {
       /* ignore quota / disabled storage */
     }

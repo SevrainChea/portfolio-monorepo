@@ -99,7 +99,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { UPCOMING_FAMILIES, type FamilyId } from "~/composables/useTheme";
+import {
+  UPCOMING_FAMILIES,
+  ALL_VARIANT_IDS,
+  type FamilyId,
+} from "~/composables/useTheme";
 
 const data = usePortfolioData();
 const {
@@ -115,6 +119,18 @@ const {
 } = useTheme();
 
 const upcoming = UPCOMING_FAMILIES;
+
+// Active-ring rule generated from the registry, so it covers every variant of
+// every family with no hardcoded ids. It matches the <html data-variant> that
+// the inline script sets pre-paint, so the ring is flash-free on reload and
+// auto-extends whenever a family is added to the registry.
+const activeRingCss =
+  ALL_VARIANT_IDS.map(
+    (id) => `html[data-variant="${id}"] .ph-switch .sw[data-variant="${id}"]`,
+  ).join(",") +
+  "{box-shadow:0 0 0 2px var(--th-accent);border-radius:50%}";
+useHead({ style: [{ innerHTML: activeRingCss, key: "ph-active-ring" }] });
+
 const menuOpen = ref(false);
 const condensed = ref(false);
 
@@ -289,15 +305,8 @@ onUnmounted(() => {
 .sw:hover .dot {
   transform: scale(1.14);
 }
-/* active ring: matches the active variant via <html data-variant>.
-   Variant ids are Aurora's; extend this list when more families ship. */
-:global(html[data-variant="cobalt"]) .sw[data-variant="cobalt"],
-:global(html[data-variant="emerald"]) .sw[data-variant="emerald"],
-:global(html[data-variant="amethyst"]) .sw[data-variant="amethyst"],
-:global(html[data-variant="garnet"]) .sw[data-variant="garnet"] {
-  box-shadow: 0 0 0 2px var(--acc);
-  border-radius: 50%;
-}
+/* active ring is injected via useHead (generated from the registry) so it
+   covers every variant without hardcoded ids — see <script>. */
 .sw .tip {
   position: absolute;
   top: 34px;
