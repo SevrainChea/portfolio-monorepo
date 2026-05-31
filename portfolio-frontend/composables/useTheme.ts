@@ -100,6 +100,9 @@ export function useTheme() {
   const variants = useState<Record<string, string>>("pf-variants", () => ({}));
   const modes = useState<Record<string, Mode>>("pf-modes", () => ({}));
   const hydrated = useState<boolean>("pf-hydrated", () => false);
+  // OS preference, detected on the client; used as the mode fallback before any
+  // explicit choice is stored. null = no OS preference → use the family default.
+  const systemMode = useState<Mode | null>("pf-system-mode", () => null);
 
   // Hydrate from localStorage AFTER mount, not during setup: this keeps the
   // first client render identical to the SSR default render, avoiding a Vue
@@ -115,6 +118,12 @@ export function useTheme() {
         family.value = storedFamily as FamilyId;
       variants.value = loadJSON<Record<string, string>>(VARIANTS_KEY, {});
       modes.value = loadJSON<Record<string, Mode>>(MODES_KEY, {});
+      const mm = window.matchMedia;
+      systemMode.value = mm("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : mm("(prefers-color-scheme: light)").matches
+          ? "light"
+          : null;
     });
   }
 
@@ -124,7 +133,10 @@ export function useTheme() {
     () => variants.value[family.value] ?? currentFamily.value.defaultVariant,
   );
   const currentMode = computed<Mode>(
-    () => modes.value[family.value] ?? currentFamily.value.defaultMode,
+    () =>
+      modes.value[family.value] ??
+      systemMode.value ??
+      currentFamily.value.defaultMode,
   );
   const currentVariantDef = computed(
     () =>
