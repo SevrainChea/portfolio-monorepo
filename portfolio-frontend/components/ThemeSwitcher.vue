@@ -199,14 +199,14 @@ onUnmounted(() => {
 }
 /* Chrome (glass) is driven by the .dark class on <html>, which the pre-paint
    inline script sets — so the pill never flashes the wrong chrome on reload. */
-:global(html.dark) .ph-switch {
+html.dark .ph-switch {
   background: rgba(13, 15, 21, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.16);
   color: #fff;
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
-:global(html:not(.dark)) .ph-switch {
+html:not(.dark) .ph-switch {
   background: rgba(252, 251, 248, 0.93);
   border: 1px solid rgba(20, 20, 30, 0.12);
   color: #171310;
@@ -262,10 +262,10 @@ onUnmounted(() => {
   width: 1px;
   height: 22px;
 }
-:global(html.dark) .ph-switch .sep {
+html.dark .ph-switch .sep {
   background: rgba(255, 255, 255, 0.18);
 }
-:global(html:not(.dark)) .ph-switch .sep {
+html:not(.dark) .ph-switch .sep {
   background: rgba(20, 20, 30, 0.14);
 }
 
@@ -299,7 +299,7 @@ onUnmounted(() => {
 .sw .dot {
   background: var(--sw-d);
 }
-:global(html:not(.dark)) .sw .dot {
+html:not(.dark) .sw .dot {
   background: var(--sw-l);
 }
 .sw:hover .dot {
@@ -323,12 +323,12 @@ onUnmounted(() => {
     opacity 0.18s,
     transform 0.18s;
 }
-:global(html.dark) .ph-switch .sw .tip {
+html.dark .ph-switch .sw .tip {
   color: #fff;
   background: rgba(8, 9, 13, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
-:global(html:not(.dark)) .ph-switch .sw .tip {
+html:not(.dark) .ph-switch .sw .tip {
   color: #171310;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(20, 20, 30, 0.12);
@@ -353,11 +353,11 @@ onUnmounted(() => {
     border-color 0.25s,
     color 0.25s;
 }
-:global(html.dark) .ph-switch .mode {
+html.dark .ph-switch .mode {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
 }
-:global(html:not(.dark)) .ph-switch .mode {
+html:not(.dark) .ph-switch .mode {
   border: 1px solid rgba(20, 20, 30, 0.18);
   color: #171310;
 }
@@ -369,10 +369,10 @@ onUnmounted(() => {
 .mode .ic-moon {
   display: none;
 }
-:global(html:not(.dark)) .mode .ic-sun {
+html:not(.dark) .mode .ic-sun {
   display: none;
 }
-:global(html:not(.dark)) .mode .ic-moon {
+html:not(.dark) .mode .ic-moon {
   display: inline-flex;
 }
 
@@ -398,12 +398,12 @@ onUnmounted(() => {
   gap: 2px;
   z-index: 70;
 }
-:global(html.dark) .ph-switch .ph-menu {
+html.dark .ph-switch .ph-menu {
   background: rgba(15, 17, 23, 0.97);
   border: 1px solid rgba(255, 255, 255, 0.13);
   box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.8);
 }
-:global(html:not(.dark)) .ph-switch .ph-menu {
+html:not(.dark) .ph-switch .ph-menu {
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(20, 20, 30, 0.1);
   box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.32);
@@ -421,10 +421,10 @@ onUnmounted(() => {
   width: 100%;
   transition: background 0.15s;
 }
-:global(html.dark) .ph-switch .ph-menu button:hover {
+html.dark .ph-switch .ph-menu button:hover {
   background: rgba(255, 255, 255, 0.07);
 }
-:global(html:not(.dark)) .ph-switch .ph-menu button:hover {
+html:not(.dark) .ph-switch .ph-menu button:hover {
   background: rgba(20, 20, 30, 0.05);
 }
 .ph-menu button .dot {
@@ -569,10 +569,10 @@ onUnmounted(() => {
     padding: 8px 12px;
     border-top: 1px solid;
   }
-  :global(html.dark) .ph-switch.cond .ph-nav {
+  html.dark .ph-switch.cond .ph-nav {
     border-top-color: rgba(255, 255, 255, 0.12);
   }
-  :global(html:not(.dark)) .ph-switch.cond .ph-nav {
+  html:not(.dark) .ph-switch.cond .ph-nav {
     border-top-color: rgba(20, 20, 30, 0.1);
   }
   .ph-switch .ph-nav .mini {
@@ -596,10 +596,10 @@ onUnmounted(() => {
   .ph-switch .ph-nav a.active {
     color: var(--th-accent);
   }
-  :global(html.dark) .ph-switch .ph-nav a {
+  html.dark .ph-switch .ph-nav a {
     background: rgba(255, 255, 255, 0.06);
   }
-  :global(html:not(.dark)) .ph-switch .ph-nav a {
+  html:not(.dark) .ph-switch .ph-nav a {
     background: rgba(20, 20, 30, 0.05);
   }
 }
