@@ -1,5 +1,7 @@
 <template>
-  <div class="flex h-full flex-col gap-4">
+  <div
+    class="text-fg-light relative z-10 mx-auto flex h-screen max-w-5xl flex-col gap-4 px-6 py-3 xl:px-12"
+  >
     <!-- Header -->
     <div class="flex shrink-0 items-center gap-3 py-2">
       <NuxtLink

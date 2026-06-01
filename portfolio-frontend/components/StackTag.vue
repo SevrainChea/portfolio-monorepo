@@ -1,13 +1,13 @@
 <template>
-  <div
-    class="bg-primary/80 text-primary-bg1 rounded-lg px-2 py-1 text-sm font-semibold shadow-lg"
+  <span
+    class="bg-tag-bg border-tag-border text-tag-text inline-block rounded-md border px-[11px] py-1 text-[11.5px] font-medium"
   >
     {{ text }}
-  </div>
+  </span>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   text: string;
 }>();
 </script>

@@ -1,75 +1,260 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-playfair-display: "Playfair Display", serif;
+  --font-inter: "Inter", system-ui, sans-serif;
 
+  /* ── Aurora role tokens → Tailwind color utilities (text-name, bg-tag-bg, …) ── */
+  --color-name: var(--th-name);
+  --color-ink: var(--th-ink);
+  --color-body: var(--th-body);
+  --color-muted: var(--th-muted);
+  --color-accent: var(--th-accent);
+  --color-accent-soft: var(--th-accent-soft);
+  --color-bd: var(--th-border);
+  --color-bd-strong: var(--th-border-strong);
+  --color-avatar-ring: var(--th-avatar-ring);
+  --color-tag-bg: var(--th-tag-bg);
+  --color-tag-border: var(--th-tag-border);
+  --color-tag-text: var(--th-tag-text);
+
+  /* ── Legacy names kept for components shared with other pages (chat.vue) ── */
   --color-primary: var(--th-primary);
-
   --color-fg-light: var(--th-fg-light);
   --color-fg-accent: var(--th-fg-accent);
   --color-fg-highlight: var(--th-fg-highlight);
   --color-fg-muted: var(--th-fg-muted);
-
   --color-primary-bg1: var(--th-primary-bg1);
   --color-primary-bg2: var(--th-primary-bg2);
   --color-primary-bg3: var(--th-primary-bg3);
-
-  --color-circle1: var(--th-circle1);
-  --color-circle2: var(--th-circle2);
-  --color-circle3: var(--th-circle3);
-  --color-circle4: var(--th-circle4);
-  --color-circle5: var(--th-circle5);
-
-  --color-interactive: var(--th-interactive);
-  --circle-size: 90%;
-  --blending: var(--th-blending);
 }
 
-/* ─── Dark palette (default) ─── */
+/* ════════════════════════════════════════════════════════════════════
+   THEME REGISTRY
+   Each family/variant/mode is a selector block that re-sets the same
+   --th-* role tokens. Components read var(--th-*) and never change.
+   Active selector is driven by data-family / data-variant / .dark on <html>
+   (written by useTheme()). Values copied verbatim from the design files.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Fallback (used pre-hydration / if no attributes) = Aurora · Cobalt · dark. */
 :root {
-  --th-primary: rgb(187, 163, 200);
+  color-scheme: dark;
+  --th-bg: #06080f;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #0f1c3a 0%, #080c18 52%, #05070f 100%);
+  --th-ink: #f2f6ff;
+  --th-name: #ffffff;
+  --th-body: #cdd3e2;
+  --th-muted: #8b93a7;
+  --th-accent: #5ad1ff;
+  --th-accent-soft: #9fd9ff;
+  --th-border: rgba(255, 255, 255, 0.1);
+  --th-border-strong: rgba(255, 255, 255, 0.16);
+  --th-avatar-ring: rgba(255, 255, 255, 0.18);
+  --th-tag-bg: rgba(255, 255, 255, 0.03);
+  --th-tag-border: rgba(255, 255, 255, 0.14);
+  --th-tag-text: #c4cad9;
+  --th-blob-1: #2b5bff;
+  --th-blob-2: #7c3aed;
+  --th-blob-3: #06b6d4;
+  --th-blob-blend: screen;
+  --th-blob-op: 0.62;
+  --th-grain-op: 0.05;
 
-  --th-fg-light: rgb(255, 255, 255);
-  --th-fg-accent: rgb(60, 185, 255);
-  --th-fg-highlight: rgb(250, 33, 124);
-  --th-fg-muted: rgb(202, 205, 220);
-
-  --th-primary-bg1: rgb(25, 35, 60);
-  --th-primary-bg2: rgb(45, 25, 55);
-  --th-primary-bg3: rgb(35, 25, 45);
-
-  --th-circle1: 35, 75, 130;
-  --th-circle2: 155, 40, 95;
-  --th-circle3: 85, 40, 145;
-  --th-circle4: 25, 115, 105;
-  --th-circle5: 175, 85, 35;
-
-  --th-interactive: 50, 130, 195;
-  --th-blending: overlay;
+  /* Legacy aliases → resolve to whichever role token is active. */
+  --th-fg-light: var(--th-ink);
+  --th-fg-muted: var(--th-muted);
+  --th-fg-accent: var(--th-accent);
+  --th-fg-highlight: var(--th-accent);
+  --th-primary: var(--th-accent);
+  --th-primary-bg1: var(--th-bg);
+  --th-primary-bg2: var(--th-bg);
+  --th-primary-bg3: var(--th-bg);
 }
 
-/* ─── Light palette ─── */
-:root:not(.dark) {
-  --th-primary: rgb(120, 80, 150);
+/* ─── Aurora · Cobalt & Frost ─── */
+[data-family="aurora"][data-variant="cobalt"].dark {
+  --th-bg: #06080f;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #0f1c3a 0%, #080c18 52%, #05070f 100%);
+  --th-ink: #f2f6ff;
+  --th-name: #ffffff;
+  --th-body: #cdd3e2;
+  --th-muted: #8b93a7;
+  --th-accent: #5ad1ff;
+  --th-accent-soft: #9fd9ff;
+  --th-border: rgba(255, 255, 255, 0.1);
+  --th-border-strong: rgba(255, 255, 255, 0.16);
+  --th-avatar-ring: rgba(255, 255, 255, 0.18);
+  --th-tag-bg: rgba(255, 255, 255, 0.03);
+  --th-tag-border: rgba(255, 255, 255, 0.14);
+  --th-tag-text: #c4cad9;
+  --th-blob-1: #2b5bff;
+  --th-blob-2: #7c3aed;
+  --th-blob-3: #06b6d4;
+  --th-blob-blend: screen;
+  --th-blob-op: 0.62;
+  --th-grain-op: 0.05;
+}
+[data-family="aurora"][data-variant="cobalt"]:not(.dark) {
+  --th-bg: #eef2fb;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #dce6fb 0%, #eef2fb 52%, #f5f8fd 100%);
+  --th-ink: #0d1a33;
+  --th-name: #0a1430;
+  --th-body: #2f3a52;
+  --th-muted: #6a7389;
+  --th-accent: #1f6fe0;
+  --th-accent-soft: #1a5bc0;
+  --th-border: rgba(18, 38, 88, 0.14);
+  --th-border-strong: rgba(18, 38, 88, 0.22);
+  --th-avatar-ring: rgba(18, 38, 88, 0.2);
+  --th-tag-bg: rgba(31, 111, 224, 0.07);
+  --th-tag-border: rgba(31, 111, 224, 0.28);
+  --th-tag-text: #1a5bc0;
+  --th-blob-1: #8fb0ff;
+  --th-blob-2: #c0a8ff;
+  --th-blob-3: #7fd8e8;
+  --th-blob-blend: multiply;
+  --th-blob-op: 0.34;
+  --th-grain-op: 0.035;
+}
 
-  --th-fg-light: rgb(30, 30, 45);
-  --th-fg-accent: rgb(20, 120, 200);
-  --th-fg-highlight: rgb(200, 20, 100);
-  --th-fg-muted: rgb(80, 85, 105);
+/* ─── Aurora · Emerald & Brass ─── */
+[data-family="aurora"][data-variant="emerald"].dark {
+  --th-bg: #0d1c15;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #16331f 0%, #0d1c15 54%, #0a1610 100%);
+  --th-ink: #f5edda;
+  --th-name: #f7f0df;
+  --th-body: #d3dac8;
+  --th-muted: #9aa491;
+  --th-accent: #cea954;
+  --th-accent-soft: #e0c98a;
+  --th-border: rgba(206, 169, 84, 0.2);
+  --th-border-strong: rgba(206, 169, 84, 0.32);
+  --th-avatar-ring: rgba(206, 169, 84, 0.5);
+  --th-tag-bg: rgba(206, 169, 84, 0.07);
+  --th-tag-border: rgba(206, 169, 84, 0.28);
+  --th-tag-text: #d8c187;
+  --th-blob-1: #2f8f5c;
+  --th-blob-2: #caa24e;
+  --th-blob-3: #1f7a4a;
+  --th-blob-blend: screen;
+  --th-blob-op: 0.5;
+  --th-grain-op: 0.05;
+}
+[data-family="aurora"][data-variant="emerald"]:not(.dark) {
+  --th-bg: #f1f4ea;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #e2ecd7 0%, #f1f4ea 54%, #f6f8f0 100%);
+  --th-ink: #19291b;
+  --th-name: #152619;
+  --th-body: #38453a;
+  --th-muted: #6c7866;
+  --th-accent: #8a6a1c;
+  --th-accent-soft: #74591a;
+  --th-border: rgba(60, 80, 40, 0.15);
+  --th-border-strong: rgba(60, 80, 40, 0.24);
+  --th-avatar-ring: rgba(138, 106, 28, 0.38);
+  --th-tag-bg: rgba(138, 106, 28, 0.08);
+  --th-tag-border: rgba(138, 106, 28, 0.3);
+  --th-tag-text: #74591a;
+  --th-blob-1: #7fc99a;
+  --th-blob-2: #d9c07a;
+  --th-blob-3: #8fd0a8;
+  --th-blob-blend: multiply;
+  --th-blob-op: 0.32;
+  --th-grain-op: 0.035;
+}
 
-  --th-primary-bg1: rgb(215, 220, 235);
-  --th-primary-bg2: rgb(225, 215, 235);
-  --th-primary-bg3: rgb(235, 230, 240);
+/* ─── Aurora · Amethyst & Rose ─── */
+[data-family="aurora"][data-variant="amethyst"].dark {
+  --th-bg: #130d20;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #2a1a3f 0%, #160f26 54%, #100a1b 100%);
+  --th-ink: #f4eaf6;
+  --th-name: #fbf3fb;
+  --th-body: #dcd2e4;
+  --th-muted: #a99bb4;
+  --th-accent: #ef8fb3;
+  --th-accent-soft: #f6b6cf;
+  --th-border: rgba(239, 143, 179, 0.2);
+  --th-border-strong: rgba(239, 143, 179, 0.32);
+  --th-avatar-ring: rgba(239, 143, 179, 0.42);
+  --th-tag-bg: rgba(239, 143, 179, 0.07);
+  --th-tag-border: rgba(239, 143, 179, 0.28);
+  --th-tag-text: #f0b8cf;
+  --th-blob-1: #7c3aed;
+  --th-blob-2: #c026d3;
+  --th-blob-3: #5b21b6;
+  --th-blob-blend: screen;
+  --th-blob-op: 0.52;
+  --th-grain-op: 0.05;
+}
+[data-family="aurora"][data-variant="amethyst"]:not(.dark) {
+  --th-bg: #f7f0f8;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #eee0f3 0%, #f7f0f8 54%, #fbf5fb 100%);
+  --th-ink: #28162f;
+  --th-name: #24122f;
+  --th-body: #443248;
+  --th-muted: #7c6e83;
+  --th-accent: #c43f72;
+  --th-accent-soft: #ab3261;
+  --th-border: rgba(60, 30, 60, 0.14);
+  --th-border-strong: rgba(60, 30, 60, 0.22);
+  --th-avatar-ring: rgba(196, 63, 114, 0.36);
+  --th-tag-bg: rgba(196, 63, 114, 0.07);
+  --th-tag-border: rgba(196, 63, 114, 0.28);
+  --th-tag-text: #ab3261;
+  --th-blob-1: #b98fe6;
+  --th-blob-2: #e08fc0;
+  --th-blob-3: #a87fd8;
+  --th-blob-blend: multiply;
+  --th-blob-op: 0.32;
+  --th-grain-op: 0.035;
+}
 
-  --th-circle1: 120, 160, 220;
-  --th-circle2: 210, 130, 170;
-  --th-circle3: 160, 130, 210;
-  --th-circle4: 110, 195, 185;
-  --th-circle5: 220, 170, 120;
-
-  --th-interactive: 130, 190, 240;
-  --th-blending: soft-light;
+/* ─── Aurora · Garnet & Ember ─── */
+[data-family="aurora"][data-variant="garnet"].dark {
+  --th-bg: #1a0a0c;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #3a1518 0%, #200d10 54%, #170809 100%);
+  --th-ink: #f9ece4;
+  --th-name: #fdf4ee;
+  --th-body: #e3d1c9;
+  --th-muted: #b69189;
+  --th-accent: #ef9a55;
+  --th-accent-soft: #f5bd87;
+  --th-border: rgba(239, 154, 85, 0.2);
+  --th-border-strong: rgba(239, 154, 85, 0.32);
+  --th-avatar-ring: rgba(239, 154, 85, 0.42);
+  --th-tag-bg: rgba(239, 154, 85, 0.07);
+  --th-tag-border: rgba(239, 154, 85, 0.28);
+  --th-tag-text: #f3bd92;
+  --th-blob-1: #d9433f;
+  --th-blob-2: #e8924e;
+  --th-blob-3: #a11d4b;
+  --th-blob-blend: screen;
+  --th-blob-op: 0.5;
+  --th-grain-op: 0.05;
+}
+[data-family="aurora"][data-variant="garnet"]:not(.dark) {
+  --th-bg: #faf0ea;
+  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #f5dfd3 0%, #faf0ea 54%, #fcf5f0 100%);
+  --th-ink: #2c130f;
+  --th-name: #28110d;
+  --th-body: #4a342c;
+  --th-muted: #896a60;
+  --th-accent: #c2502a;
+  --th-accent-soft: #a84120;
+  --th-border: rgba(80, 30, 20, 0.14);
+  --th-border-strong: rgba(80, 30, 20, 0.22);
+  --th-avatar-ring: rgba(194, 80, 42, 0.36);
+  --th-tag-bg: rgba(194, 80, 42, 0.07);
+  --th-tag-border: rgba(194, 80, 42, 0.28);
+  --th-tag-text: #a84120;
+  --th-blob-1: #f0a08f;
+  --th-blob-2: #f0b06f;
+  --th-blob-3: #d88fa8;
+  --th-blob-blend: multiply;
+  --th-blob-op: 0.32;
+  --th-grain-op: 0.035;
 }

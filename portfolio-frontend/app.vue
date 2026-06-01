@@ -1,31 +1,34 @@
 <template>
-  <div class="">
-    <BgGradient />
-    <div
-      class="z-[100] h-screen w-screen overflow-hidden px-10 opacity-95 xl:px-32"
-    >
-      <NuxtPage />
-    </div>
+  <div>
+    <AuroraBackground />
+    <NuxtPage />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useGlaceTheme } from "@glace-ui/vue";
 import { watch } from "vue";
 
-const { isDark } = useGlaceTheme({
-  darkMode: true,
-});
+// The initial <html> theme attributes are written by a render-blocking inline
+// script (see nuxt.config app.head) so a stored non-default theme paints
+// correctly on the first frame — no flash of the default. Here we only keep
+// those attributes in sync with reactive state for live theme changes.
+// immediate:false so we never overwrite the script's values with the SSR
+// defaults before localStorage hydration (which happens in useTheme onMounted).
+const { family, currentVariant, currentMode } = useTheme();
 
-watch(
-  isDark,
-  (dark) => {
-    if (!document) return;
-    document.documentElement.classList.toggle("dark", dark);
-    document.documentElement.style.colorScheme = dark ? "dark" : "light";
-  },
-  { immediate: true },
-);
+if (import.meta.client) {
+  watch(
+    [family, currentVariant, currentMode],
+    ([f, v, m]) => {
+      const el = document.documentElement;
+      el.setAttribute("data-family", f);
+      el.setAttribute("data-variant", v);
+      el.classList.toggle("dark", m === "dark");
+      el.style.colorScheme = m;
+    },
+    { immediate: false },
+  );
+}
 </script>
 
 <style></style>

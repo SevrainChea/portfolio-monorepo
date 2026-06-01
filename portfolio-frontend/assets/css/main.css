@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   font-family:
@@ -8,6 +12,12 @@ body {
   transition:
     background-color 0.4s ease,
     color 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 .no-scrollbar {
