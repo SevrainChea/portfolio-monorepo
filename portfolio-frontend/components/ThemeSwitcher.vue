@@ -11,7 +11,9 @@
           @click.stop="menuOpen = !menuOpen"
         >
           <span class="lbl">Theme</span>
-          <span class="val">{{ currentFamily.name }}<span class="chev">▾</span></span>
+          <span class="val"
+            >{{ currentFamily.name }}<span class="chev">▾</span></span
+          >
         </button>
         <div v-if="menuOpen" class="ph-menu" role="menu" @click.stop>
           <button
@@ -127,8 +129,7 @@ const upcoming = UPCOMING_FAMILIES;
 const activeRingCss =
   ALL_VARIANT_IDS.map(
     (id) => `html[data-variant="${id}"] .ph-switch .sw[data-variant="${id}"]`,
-  ).join(",") +
-  "{box-shadow:0 0 0 2px var(--th-accent);border-radius:50%}";
+  ).join(",") + "{box-shadow:0 0 0 2px var(--th-accent);border-radius:50%}";
 useHead({ style: [{ innerHTML: activeRingCss, key: "ph-active-ring" }] });
 
 const menuOpen = ref(false);
@@ -142,7 +143,10 @@ function swatchGradient([c0, c1]: [string, string]) {
 
 // Both mode gradients as static custom props; CSS picks one off the .dark class
 // (set pre-paint by the inline script), so swatch colors never flash on reload.
-function swatchVars(swatch: { dark: [string, string]; light: [string, string] }) {
+function swatchVars(swatch: {
+  dark: [string, string];
+  light: [string, string];
+}) {
   return {
     "--sw-d": `linear-gradient(135deg, ${swatch.dark[0]} 45%, ${swatch.dark[1]} 45%)`,
     "--sw-l": `linear-gradient(135deg, ${swatch.light[0]} 45%, ${swatch.light[1]} 45%)`,
@@ -385,11 +389,15 @@ html:not(.dark) .mode .ic-moon {
   outline-offset: 2px;
 }
 
-/* Dropdown menu */
+/* Dropdown menu — right-aligned to the trigger so it opens leftward and never
+   runs off the right viewport edge (the pill is pinned top-right, and a short
+   active-family name like "Neon" makes the pill narrow, pushing the trigger
+   far right). Mobile re-anchors it left (full-width header). */
 .ph-menu {
   position: absolute;
   top: 40px;
-  left: -4px;
+  right: -4px;
+  left: auto;
   min-width: 190px;
   padding: 6px;
   border-radius: 13px;
@@ -547,6 +555,7 @@ html:not(.dark) .ph-switch .ph-menu button:hover {
   .ph-switch .ph-menu {
     top: 46px;
     left: 0;
+    right: auto;
   }
   .ph-switch .ph-nav {
     display: flex;
