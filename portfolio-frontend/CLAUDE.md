@@ -1,66 +1,65 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in `portfolio-frontend`. This file is a
+lean index — detailed conventions live in `docs/conventions/` and are linked
+below. **Read the relevant convention file before changing code in that area.**
 
 ## Project Overview
 
-Personal portfolio website for a Full-Stack Engineer/Tech Lead, built with Nuxt 3 and TailwindCSS v4. Currently in early development — some sections (projects, footer) are placeholders.
+Personal portfolio for a Tech Lead / Full-Stack Engineer, built with **Nuxt 3 +
+Vue 3 (Composition API, `<script setup lang="ts">`) + TailwindCSS v4**.
+
+The live site is a single screen: `pages/index.vue` renders `<AuroraLayout>`,
+the only shipped theme **family**. The whole UI is driven by a multi-theme
+system (family → variant → light/dark) whose single source of truth is
+`theme-registry.ts`. `pages/chat.vue` is a **WIP/legacy** RAG chatbot page (its
+nav link is disabled) and uses the older Tailwind-utility + `GlassCard` style.
+
+> **Deprecated — do not extend:** glass morphism / "glass-ui" (`GlassCard.vue`),
+> `backdrop-blur` card surfaces, and `BgGradient.vue` (now unreferenced dead
+> code). New work uses the token-driven Aurora system instead. See
+> [styling-and-themes.md](docs/conventions/styling-and-themes.md).
 
 ## Commands
 
-- `pnpm dev` — Start dev server (localhost:3000)
-- `pnpm build` — Production build
-- `pnpm generate` — Static site generation
-- `pnpm preview` — Preview production build
+Package manager is **pnpm** (v10.11.1); Node is pinned in `.nvmrc` (v22.16.0).
 
-Package manager is **pnpm** (v10.11.1). Node version is pinned in `.nvmrc` (v22.16.0). No test framework or linter is configured; formatting uses Prettier with `prettier-plugin-tailwindcss`.
+- `pnpm dev` — dev server at localhost:3000 (the user keeps one running; **do
+  not start your own** — changes hot-reload)
+- `pnpm build` / `pnpm generate` / `pnpm preview`
 
-## Architecture
+No test framework or linter is configured. Formatting is **Prettier** with
+`prettier-plugin-tailwindcss` (defaults: 2-space, double quotes, semicolons,
+trailing commas).
 
-**Framework:** Nuxt 3 with Vue 3 Composition API (`<script setup lang="ts">`) and TypeScript.
+## Architecture at a glance
 
-**Rendering:** Single-page app structure — `app.vue` renders `<BgGradient>` (animated background) and `<NuxtPage>`. Pages: `pages/index.vue` (portfolio), `pages/chat.vue` (streaming chatbot). No layouts directory; no middleware; no composables directory (only built-in Nuxt auto-imports used).
+- `app.vue` — renders `<AuroraBackground>` + `<NuxtPage>`; syncs reactive theme
+  state onto `<html>` attributes (`data-family` / `data-variant` / `.dark`).
+- `nuxt.config.ts` — injects a **render-blocking inline script** that sets those
+  `<html>` attributes pre-paint to avoid a flash of the default theme (FOUC).
+- `theme-registry.ts` — dependency-free single source of truth for families,
+  variants, defaults, and storage keys (shared by `useTheme` AND the FOUC
+  script so they can't drift).
+- `composables/useTheme.ts` — reactive, persisted theme state.
+- `composables/usePortfolioData.ts` — all site content (typed, hardcoded).
+- `assets/css/tailwind.css` — `@theme` token map + the theme registry CSS
+  (every variant/mode is a selector block re-setting `--th-*` role tokens).
 
-**Styling:** TailwindCSS v4 loaded as a Vite plugin (`@tailwindcss/vite`). Custom theme variables (colors, sizes) are defined in `assets/css/tailwind.css` using CSS `@theme`. Global font (Playfair Display) is set in `assets/css/main.css`.
+## Conventions (read before editing)
 
-**Component patterns:**
-- `GlassCard.vue` — Reusable glass-morphism container using dynamic component rendering (`is` prop) and `v-bind="$attrs"` forwarding. Used as wrapper in multiple sections.
-- `BgGradient.vue` — Full-screen animated gradient with SVG goo filter, mouse-tracking interactive circle, and CSS keyframe animations.
-- `ExperiencesSection.vue` — Contains hardcoded experience data array; renders `ExperienceCard` components.
-- Props use TypeScript interfaces with `defineProps` and `withDefaults`.
+- [code-style.md](docs/conventions/code-style.md) — TS, `<script setup>`,
+  imports/auto-imports, comments, formatting.
+- [components.md](docs/conventions/components.md) — component patterns, props,
+  accessibility, the two styling approaches, what's deprecated.
+- [styling-and-themes.md](docs/conventions/styling-and-themes.md) — the `--th-*`
+  token contract, adding a variant or a family, the FOUC/hydration rules.
+- [composables-data.md](docs/conventions/composables-data.md) — editing site
+  content, the data model, `useTheme` API.
 
-**Modules:** `@nuxt/image` for image optimization, `@nuxt/icon` for Iconify icons.
+## Git workflow notes
 
-**Data:** All content (experiences, about text) is hardcoded in components — no CMS, API, or data layer.
-
-**Chat page (`pages/chat.vue`):** Uses native `fetch()` + `ReadableStream` to consume SSE from `POST /api/chat/stream`. Key patterns:
-- `SSEEvent` discriminated union (`chunk | done | error`) for type-safe event handling
-- `TextDecoder` with `{ stream: true }` + line-split buffer for chunk-boundary-safe parsing
-- `reader` declared outside `try`, cancelled via `reader?.cancel()` in `finally` to release the stream on all exit paths
-- Empty assistant message with `streaming: true` pushed before fetch; tokens appended in-place; `streaming` cleared on `done`/`error`
-- Do NOT use `$fetch` for streaming — it buffers the full response. Use native `fetch()`.
-
-## Design Tokens (`assets/css/tailwind.css`)
-
-All visual design variables live in the `@theme` block:
-
-- `--color-circleN` (1–5): RGB triplets **without** `rgb()` wrapper — consumed as `rgba(var(--color-circleN), 0.8)` in `BgGradient.vue`. Changing these controls the animated bubble colors.
-- `--color-interactive`: Same RGB triplet format, controls the mouse-tracking bubble.
-- `--blending`: CSS `mix-blend-mode` applied to all bubbles (currently `overlay`).
-- `--circle-size`: Size of each bubble circle (currently `90%`).
-- Background gradient colors: `--color-primary-bg1/2/3` (deep navy/purple tones).
-
-**Current bubble palette (twilight-cool):**
-```
-circle1: 35, 75, 130   /* cool slate blue */
-circle2: 155, 40, 95   /* cool burgundy */
-circle3: 85, 40, 145   /* cool violet */
-circle4: 25, 115, 105  /* cool teal */
-circle5: 175, 85, 35   /* cool amber */
-interactive: 50, 130, 195  /* cool sky */
-```
-
-## Git Workflow Notes
-
-- When switching branches with `git checkout`, the Edit tool's file cache becomes stale — always re-read files after a branch switch before editing.
-- Force-delete (`git branch -D`) is needed for branches never merged into `main`.
+- After `git checkout` switches branches, the Edit tool's file cache goes stale
+  — re-read files before editing.
+- Force-delete (`git branch -D`) is needed for branches never merged into
+  `main`.
