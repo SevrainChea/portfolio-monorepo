@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -7,6 +7,7 @@
   --font-playfair-display: "Playfair Display", serif;
   --font-inter: "Inter", system-ui, sans-serif;
   --font-space-grotesk: "Space Grotesk", "Inter", sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* ── Aurora role tokens → Tailwind color utilities (text-name, bg-tag-bg, …) ── */
   --color-name: var(--th-name);
@@ -463,4 +464,97 @@
   --th-border: #2a322a;
   --th-body: #ccd6cb;
   --th-grain-op: 0.4;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   BLUEPRINT — an engineering spec sheet. Roles: bg→--th-bg, CY (primary)→
+   --th-accent, AM (secondary "Experience" label)→--th-am, line1→--th-line1,
+   line2→--th-line2, INK→--th-ink, MUT→--th-muted, HEAD→--th-head,
+   panel→--th-panel, notch→--th-notch, avFilter→--th-av-filter. CY-alpha
+   tints are built in BlueprintLayout via color-mix on --th-accent. Values
+   verbatim from design-files/theme-blueprint.jsx (BP_*).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Blueprint · Azure (navy draft + azure/amber) ─── */
+[data-family="blueprint"][data-variant="azure"].dark {
+  --th-bg: #0d2236;
+  --th-accent: #5bb4e8;
+  --th-am: #f0a652;
+  --th-line1: rgba(120, 180, 220, 0.14);
+  --th-line2: rgba(120, 180, 220, 0.05);
+  --th-ink: #c6dcee;
+  --th-muted: #7fa6c4;
+  --th-head: #ffffff;
+  --th-panel: rgba(9, 26, 42, 0.84);
+  --th-notch: #0f2a40;
+  --th-av-filter: saturate(0.9) brightness(0.97);
+}
+[data-family="blueprint"][data-variant="azure"]:not(.dark) {
+  --th-bg: #eef3f7;
+  --th-accent: #2b78b4;
+  --th-am: #bf6f1f;
+  --th-line1: rgba(40, 90, 140, 0.18);
+  --th-line2: rgba(40, 90, 140, 0.06);
+  --th-ink: #26343f;
+  --th-muted: #5d7287;
+  --th-head: #10202c;
+  --th-panel: rgba(248, 251, 253, 0.85);
+  --th-notch: #eef3f7;
+  --th-av-filter: saturate(0.92) contrast(1.02);
+}
+
+/* ─── Blueprint · Crimson (wine draft + coral/teal) ─── */
+[data-family="blueprint"][data-variant="crimson"].dark {
+  --th-bg: #251419;
+  --th-accent: #e2796c;
+  --th-am: #54c2b2;
+  --th-line1: rgba(224, 150, 140, 0.15);
+  --th-line2: rgba(224, 150, 140, 0.05);
+  --th-ink: #ecd2cc;
+  --th-muted: #bd928b;
+  --th-head: #fff3ef;
+  --th-panel: rgba(31, 16, 20, 0.84);
+  --th-notch: #2a1519;
+  --th-av-filter: saturate(0.95) brightness(0.96);
+}
+[data-family="blueprint"][data-variant="crimson"]:not(.dark) {
+  --th-bg: #f7efed;
+  --th-accent: #c0524a;
+  --th-am: #2f8f7e;
+  --th-line1: rgba(150, 70, 60, 0.17);
+  --th-line2: rgba(150, 70, 60, 0.06);
+  --th-ink: #3a2a27;
+  --th-muted: #876a64;
+  --th-head: #2a1411;
+  --th-panel: rgba(252, 247, 245, 0.85);
+  --th-notch: #f7efed;
+  --th-av-filter: saturate(0.97) contrast(1.02);
+}
+
+/* ─── Blueprint · Verdant (forest draft + emerald/terracotta) ─── */
+[data-family="blueprint"][data-variant="verdant"].dark {
+  --th-bg: #102420;
+  --th-accent: #5fc090;
+  --th-am: #ec9a5e;
+  --th-line1: rgba(130, 200, 160, 0.13);
+  --th-line2: rgba(130, 200, 160, 0.05);
+  --th-ink: #c8e0d2;
+  --th-muted: #85a896;
+  --th-head: #f0fff6;
+  --th-panel: rgba(11, 28, 22, 0.84);
+  --th-notch: #0e201a;
+  --th-av-filter: saturate(0.9) brightness(0.97);
+}
+[data-family="blueprint"][data-variant="verdant"]:not(.dark) {
+  --th-bg: #eef4ee;
+  --th-accent: #2f9266;
+  --th-am: #c0682a;
+  --th-line1: rgba(40, 110, 70, 0.17);
+  --th-line2: rgba(40, 110, 70, 0.06);
+  --th-ink: #283a30;
+  --th-muted: #5f7a68;
+  --th-head: #12241a;
+  --th-panel: rgba(248, 252, 249, 0.85);
+  --th-notch: #eef4ee;
+  --th-av-filter: saturate(0.94) contrast(1.02);
 }

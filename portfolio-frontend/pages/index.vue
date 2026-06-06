@@ -2,6 +2,7 @@
   <AuroraLayout v-if="family === 'aurora'" />
   <NeonLayout v-else-if="family === 'neon'" />
   <EditorialLayout v-else-if="family === 'editorial'" />
+  <BlueprintLayout v-else-if="family === 'blueprint'" />
 </template>
 
 <script setup lang="ts">
