@@ -8,7 +8,7 @@
 // UPCOMING_FAMILIES). Everything else (switcher swatches, the FOUC script's
 // default map, the active-ring CSS) derives from this registry.
 
-export type FamilyId = "aurora" | "neon" | "editorial"; // | "blueprint"
+export type FamilyId = "aurora" | "neon" | "editorial" | "blueprint";
 export type Mode = "dark" | "light";
 
 export interface VariantDef {
@@ -117,12 +117,35 @@ export const THEME_REGISTRY: Record<FamilyId, FamilyDef> = {
       },
     ],
   },
+  blueprint: {
+    id: "blueprint",
+    name: "Blueprint",
+    sub: "Spec sheet",
+    defaultVariant: "azure",
+    defaultMode: "dark",
+    breakpoint: 760,
+    variants: [
+      {
+        id: "azure",
+        name: "Azure",
+        swatch: { dark: ["#5bb4e8", "#f0a652"], light: ["#2b78b4", "#bf6f1f"] },
+      },
+      {
+        id: "crimson",
+        name: "Crimson",
+        swatch: { dark: ["#e2796c", "#54c2b2"], light: ["#c0524a", "#2f8f7e"] },
+      },
+      {
+        id: "verdant",
+        name: "Verdant",
+        swatch: { dark: ["#5fc090", "#ec9a5e"], light: ["#2f9266", "#c0682a"] },
+      },
+    ],
+  },
 };
 
 /** Families not yet implemented — shown disabled in the switcher dropdown. */
-export const UPCOMING_FAMILIES = [
-  { id: "blueprint", name: "Blueprint" },
-] as const;
+export const UPCOMING_FAMILIES = [] as const;
 
 /** `{ [familyId]: [defaultVariant, defaultMode] }` — derived for the FOUC script. */
 export const FAMILY_DEFAULTS: Record<string, [string, Mode]> =
