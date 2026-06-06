@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -6,6 +6,7 @@
 @theme {
   --font-playfair-display: "Playfair Display", serif;
   --font-inter: "Inter", system-ui, sans-serif;
+  --font-space-grotesk: "Space Grotesk", "Inter", sans-serif;
 
   /* ── Aurora role tokens → Tailwind color utilities (text-name, bg-tag-bg, …) ── */
   --color-name: var(--th-name);
@@ -44,7 +45,12 @@
 :root {
   color-scheme: dark;
   --th-bg: #06080f;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #0f1c3a 0%, #080c18 52%, #05070f 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #0f1c3a 0%,
+    #080c18 52%,
+    #05070f 100%
+  );
   --th-ink: #f2f6ff;
   --th-name: #ffffff;
   --th-body: #cdd3e2;
@@ -78,7 +84,12 @@
 /* ─── Aurora · Cobalt & Frost ─── */
 [data-family="aurora"][data-variant="cobalt"].dark {
   --th-bg: #06080f;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #0f1c3a 0%, #080c18 52%, #05070f 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #0f1c3a 0%,
+    #080c18 52%,
+    #05070f 100%
+  );
   --th-ink: #f2f6ff;
   --th-name: #ffffff;
   --th-body: #cdd3e2;
@@ -100,7 +111,12 @@
 }
 [data-family="aurora"][data-variant="cobalt"]:not(.dark) {
   --th-bg: #eef2fb;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #dce6fb 0%, #eef2fb 52%, #f5f8fd 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #dce6fb 0%,
+    #eef2fb 52%,
+    #f5f8fd 100%
+  );
   --th-ink: #0d1a33;
   --th-name: #0a1430;
   --th-body: #2f3a52;
@@ -124,7 +140,12 @@
 /* ─── Aurora · Emerald & Brass ─── */
 [data-family="aurora"][data-variant="emerald"].dark {
   --th-bg: #0d1c15;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #16331f 0%, #0d1c15 54%, #0a1610 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #16331f 0%,
+    #0d1c15 54%,
+    #0a1610 100%
+  );
   --th-ink: #f5edda;
   --th-name: #f7f0df;
   --th-body: #d3dac8;
@@ -146,7 +167,12 @@
 }
 [data-family="aurora"][data-variant="emerald"]:not(.dark) {
   --th-bg: #f1f4ea;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #e2ecd7 0%, #f1f4ea 54%, #f6f8f0 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #e2ecd7 0%,
+    #f1f4ea 54%,
+    #f6f8f0 100%
+  );
   --th-ink: #19291b;
   --th-name: #152619;
   --th-body: #38453a;
@@ -170,7 +196,12 @@
 /* ─── Aurora · Amethyst & Rose ─── */
 [data-family="aurora"][data-variant="amethyst"].dark {
   --th-bg: #130d20;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #2a1a3f 0%, #160f26 54%, #100a1b 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #2a1a3f 0%,
+    #160f26 54%,
+    #100a1b 100%
+  );
   --th-ink: #f4eaf6;
   --th-name: #fbf3fb;
   --th-body: #dcd2e4;
@@ -192,7 +223,12 @@
 }
 [data-family="aurora"][data-variant="amethyst"]:not(.dark) {
   --th-bg: #f7f0f8;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #eee0f3 0%, #f7f0f8 54%, #fbf5fb 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #eee0f3 0%,
+    #f7f0f8 54%,
+    #fbf5fb 100%
+  );
   --th-ink: #28162f;
   --th-name: #24122f;
   --th-body: #443248;
@@ -216,7 +252,12 @@
 /* ─── Aurora · Garnet & Ember ─── */
 [data-family="aurora"][data-variant="garnet"].dark {
   --th-bg: #1a0a0c;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #3a1518 0%, #200d10 54%, #170809 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #3a1518 0%,
+    #200d10 54%,
+    #170809 100%
+  );
   --th-ink: #f9ece4;
   --th-name: #fdf4ee;
   --th-body: #e3d1c9;
@@ -238,7 +279,12 @@
 }
 [data-family="aurora"][data-variant="garnet"]:not(.dark) {
   --th-bg: #faf0ea;
-  --th-bg-grad: radial-gradient(125% 85% at 14% -5%, #f5dfd3 0%, #faf0ea 54%, #fcf5f0 100%);
+  --th-bg-grad: radial-gradient(
+    125% 85% at 14% -5%,
+    #f5dfd3 0%,
+    #faf0ea 54%,
+    #fcf5f0 100%
+  );
   --th-ink: #2c130f;
   --th-name: #28110d;
   --th-body: #4a342c;
@@ -257,4 +303,97 @@
   --th-blob-blend: multiply;
   --th-blob-op: 0.32;
   --th-grain-op: 0.035;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   NEON — a glowing neon sign at night. Roles: bg, panel, glow (primary),
+   acc (secondary), ink, body, line, name-col, name-halo, head.
+   --th-accent is set to the primary glow so the shared switcher ring/hover
+   picks up the neon color. Light = "neon sign in daylight": softly tinted
+   wall, glow dialed back in NeonLayout's :not(.dark) rules. Values verbatim
+   from design-files/theme-neon.jsx (NEON_* / NEON_*_LIGHT, soft saturation).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Neon · Hotline (hot-pink + teal) ─── */
+[data-family="neon"][data-variant="hotline"].dark {
+  --th-bg: #0d0518;
+  --th-panel: #190a2b;
+  --th-glow: #ff2e88;
+  --th-acc: #2de2e6;
+  --th-ink: #f5e9ff;
+  --th-body: #c2add9;
+  --th-line: rgba(255, 255, 255, 0.07);
+  --th-name-col: #ffffff;
+  --th-name-halo: #ffffff;
+  --th-head: #ffffff;
+  --th-accent: var(--th-glow);
+}
+[data-family="neon"][data-variant="hotline"]:not(.dark) {
+  --th-bg: #f5eef5;
+  --th-panel: #fbf6fb;
+  --th-glow: #e0247a;
+  --th-acc: #0aa1a6;
+  --th-ink: #2a1f33;
+  --th-body: #6a5d76;
+  --th-line: rgba(40, 20, 60, 0.07);
+  --th-name-col: #e0247a;
+  --th-name-halo: #f7a7c8;
+  --th-head: #2a1f33;
+  --th-accent: var(--th-glow);
+}
+
+/* ─── Neon · Acid (toxic lime + electric blue) ─── */
+[data-family="neon"][data-variant="acid"].dark {
+  --th-bg: #06110b;
+  --th-panel: #0c2017;
+  --th-glow: #b6ff3c;
+  --th-acc: #2f9bff;
+  --th-ink: #eafff0;
+  --th-body: #a8c9b6;
+  --th-line: rgba(255, 255, 255, 0.06);
+  --th-name-col: #ffffff;
+  --th-name-halo: #ffffff;
+  --th-head: #ffffff;
+  --th-accent: var(--th-glow);
+}
+[data-family="neon"][data-variant="acid"]:not(.dark) {
+  --th-bg: #eff5ec;
+  --th-panel: #f9fcf6;
+  --th-glow: #4fa514;
+  --th-acc: #1f78d6;
+  --th-ink: #1b271e;
+  --th-body: #5a6b5f;
+  --th-line: rgba(20, 40, 25, 0.07);
+  --th-name-col: #4fa514;
+  --th-name-halo: #bfe39a;
+  --th-head: #1b271e;
+  --th-accent: var(--th-glow);
+}
+
+/* ─── Neon · Electric (electric-blue + violet) ─── */
+[data-family="neon"][data-variant="electric"].dark {
+  --th-bg: #04081c;
+  --th-panel: #0a1338;
+  --th-glow: #2e9bff;
+  --th-acc: #b14bff;
+  --th-ink: #eaf2ff;
+  --th-body: #9fb4d8;
+  --th-line: rgba(255, 255, 255, 0.07);
+  --th-name-col: #ffffff;
+  --th-name-halo: #ffffff;
+  --th-head: #ffffff;
+  --th-accent: var(--th-glow);
+}
+[data-family="neon"][data-variant="electric"]:not(.dark) {
+  --th-bg: #edf1fb;
+  --th-panel: #f7f9fe;
+  --th-glow: #1f5fe0;
+  --th-acc: #8b2fdc;
+  --th-ink: #1a2138;
+  --th-body: #5a667f;
+  --th-line: rgba(20, 30, 60, 0.07);
+  --th-name-col: #1f5fe0;
+  --th-name-halo: #a9c4f7;
+  --th-head: #1a2138;
+  --th-accent: var(--th-glow);
 }

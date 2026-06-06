@@ -1,6 +1,8 @@
 <template>
   <div>
-    <AuroraBackground />
+    <!-- Aurora ships a shared fixed background; every other family draws its own
+         background inside its layout component, so gate this to Aurora only. -->
+    <AuroraBackground v-if="family === 'aurora'" />
     <NuxtPage />
   </div>
 </template>
