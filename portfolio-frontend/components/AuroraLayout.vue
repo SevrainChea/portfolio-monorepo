@@ -175,11 +175,14 @@ function positionLine(xp: Experience): string {
   background: linear-gradient(90deg, var(--th-border-strong), transparent);
   margin: 30px 0;
 }
-.aurora-root nav {
+/* Scoped to the sidebar (`.left`): the shared <ThemeSwitcher> renders its mobile
+   header as <nav class="ph-nav"> inside .aurora-root, so a bare `.aurora-root nav`
+   selector would leak onto it (stacking the links vertically). */
+.aurora-root .left nav {
   display: flex;
   flex-direction: column;
 }
-.aurora-root nav a {
+.aurora-root .left nav a {
   display: flex;
   align-items: baseline;
   gap: 13px;
@@ -194,18 +197,18 @@ function positionLine(xp: Experience): string {
     padding 0.22s,
     border-color 0.6s ease;
 }
-.aurora-root nav a .ix {
+.aurora-root .left nav a .ix {
   font-family: var(--font-playfair-display);
   font-style: italic;
   font-size: 14px;
   color: var(--th-accent);
   font-weight: 500;
 }
-.aurora-root nav a:hover {
+.aurora-root .left nav a:hover {
   color: var(--th-accent-soft);
   padding-left: 6px;
 }
-.aurora-root nav a.active {
+.aurora-root .left nav a.active {
   color: var(--th-ink);
 }
 .aurora-root .socials {
@@ -420,7 +423,7 @@ function positionLine(xp: Experience): string {
   .aurora-root .divrule {
     margin: 24px 0;
   }
-  .aurora-root nav a {
+  .aurora-root .left nav a {
     padding: 11px 0;
   }
   .aurora-root .right {

@@ -580,6 +580,9 @@ html:not(.dark) .ph-switch .ph-menu button:hover {
 }
 .ph-switch.is-mobile .ph-nav {
   display: flex;
+  /* explicit row: .ph-nav is a <nav> nested in each layout's root, so a layout's
+     bare `nav` selector (e.g. Aurora's column sidebar nav) must not flip it. */
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   width: 100%;
