@@ -1,5 +1,5 @@
 <template>
-  <div class="ph-switch" :class="{ cond: condensed }">
+  <div class="ph-switch" :class="{ cond: condensed, 'is-mobile': isMobile }">
     <div class="ph-row">
       <!-- Family selector + dropdown -->
       <div class="fam" :class="{ open: menuOpen }">
@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import {
   UPCOMING_FAMILIES,
   ALL_VARIANT_IDS,
@@ -134,6 +134,14 @@ useHead({ style: [{ innerHTML: activeRingCss, key: "ph-active-ring" }] });
 
 const menuOpen = ref(false);
 const condensed = ref(false);
+// The pill collapses to a full-width sticky header at the ACTIVE family's own
+// registry breakpoint (Aurora 880; Neon/Editorial/Blueprint 760) — not a single
+// hardcoded width — so the switcher flips in lockstep with each family's layout.
+// Set in onMounted (before first paint, like `condensed`), so there's no flash.
+const isMobile = ref(false);
+const updateMobile = () => {
+  isMobile.value = window.innerWidth <= currentFamily.value.breakpoint;
+};
 
 // Single gradient — used by the family dropdown, which only renders once opened
 // (post-mount), so it can safely depend on reactive currentMode.
@@ -168,14 +176,20 @@ const onKeydown = (e: KeyboardEvent) => {
   if (e.key === "Escape") menuOpen.value = false;
 };
 
+// Re-evaluate when the family changes — breakpoints differ per family.
+watch(currentFamily, updateMobile);
+
 onMounted(() => {
   onScroll();
+  updateMobile();
   window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", updateMobile, { passive: true });
   window.addEventListener("click", onDocClick);
   window.addEventListener("keydown", onKeydown);
 });
 onUnmounted(() => {
   window.removeEventListener("scroll", onScroll);
+  window.removeEventListener("resize", updateMobile);
   window.removeEventListener("click", onDocClick);
   window.removeEventListener("keydown", onKeydown);
 });
@@ -504,112 +518,117 @@ html:not(.dark) .ph-switch .ph-menu button:hover {
 }
 
 /* ════════ MOBILE: switcher becomes a full-width sticky header ════════ */
-/* Breakpoint matches Aurora's registry breakpoint (880). CSS-driven (not JS)
-   so there's no desktop-pill flash on narrow viewports. */
-@media (max-width: 880px) {
-  .ph-switch {
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 0;
-    border-width: 0 0 1px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 0;
-    box-shadow: 0 6px 22px -14px rgba(0, 0, 0, 0.7);
-  }
-  .ph-switch .ph-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 13px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 14px;
-    position: relative;
-  }
-  .ph-switch .fam {
-    flex: 0 0 auto;
-  }
-  .ph-switch .fam .lbl {
-    display: none;
-  }
-  .ph-switch .sw {
-    width: 25px;
-    height: 25px;
-  }
-  .ph-switch .sw .dot {
-    width: 19px;
-    height: 19px;
-  }
-  .ph-switch .sw .tip {
-    display: none;
-  }
-  .ph-switch .mode {
-    width: 33px;
-    height: 33px;
-  }
-  .ph-switch .ph-menu {
-    top: 46px;
-    left: 0;
-    right: auto;
-  }
-  .ph-switch .ph-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    padding: 0 12px;
-    transition:
-      max-height 0.3s ease,
-      opacity 0.26s ease,
-      padding 0.3s ease;
-  }
-  .ph-switch.cond .ph-nav {
-    max-height: 56px;
-    opacity: 1;
-    padding: 8px 12px;
-    border-top: 1px solid;
-  }
-  html.dark .ph-switch.cond .ph-nav {
-    border-top-color: rgba(255, 255, 255, 0.12);
-  }
-  html:not(.dark) .ph-switch.cond .ph-nav {
-    border-top-color: rgba(20, 20, 30, 0.1);
-  }
-  .ph-switch .ph-nav .mini {
-    flex: 0 0 auto;
-  }
-  .ph-switch .ph-nav .mini .nm {
-    max-width: 92px;
-  }
-  .ph-switch .ph-nav a {
-    flex: 1;
-    text-align: center;
-    font-size: 12.5px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-    color: inherit;
-    padding: 8px 6px;
-    border-radius: 8px;
-    transition: background 0.15s;
-  }
-  .ph-switch .ph-nav a.active {
-    color: var(--th-accent);
-  }
-  html.dark .ph-switch .ph-nav a {
-    background: rgba(255, 255, 255, 0.06);
-  }
-  html:not(.dark) .ph-switch .ph-nav a {
-    background: rgba(20, 20, 30, 0.05);
-  }
+/* Triggered per-family at its own registry breakpoint (Aurora 880; Neon /
+   Editorial / Blueprint 760) via the JS-toggled .is-mobile class, so the header
+   flips in lockstep with each family's own mobile layout instead of one
+   hardcoded width. The class is set in onMounted (before first paint, like
+   .cond), so there's no desktop-pill flash. */
+.ph-switch.is-mobile {
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+  border-width: 0 0 1px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  box-shadow: 0 6px 22px -14px rgba(0, 0, 0, 0.7);
+}
+.ph-switch.is-mobile .ph-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  position: relative;
+}
+.ph-switch.is-mobile .fam {
+  flex: 0 0 auto;
+  /* static so the dropdown anchors to the full-width .ph-row (and can be pinned
+     to its right edge) instead of to the centered trigger, whose position
+     shifts with the active family's name length. */
+  position: static;
+}
+.ph-switch.is-mobile .fam .lbl {
+  display: none;
+}
+.ph-switch.is-mobile .sw {
+  width: 25px;
+  height: 25px;
+}
+.ph-switch.is-mobile .sw .dot {
+  width: 19px;
+  height: 19px;
+}
+.ph-switch.is-mobile .sw .tip {
+  display: none;
+}
+.ph-switch.is-mobile .mode {
+  width: 33px;
+  height: 33px;
+}
+.ph-switch.is-mobile .ph-menu {
+  top: 46px;
+  right: 14px;
+  left: auto;
+}
+.ph-switch.is-mobile .ph-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 12px;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.26s ease,
+    padding 0.3s ease;
+}
+.ph-switch.is-mobile.cond .ph-nav {
+  max-height: 56px;
+  opacity: 1;
+  padding: 8px 12px;
+  border-top: 1px solid;
+}
+html.dark .ph-switch.is-mobile.cond .ph-nav {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+html:not(.dark) .ph-switch.is-mobile.cond .ph-nav {
+  border-top-color: rgba(20, 20, 30, 0.1);
+}
+.ph-switch.is-mobile .ph-nav .mini {
+  flex: 0 0 auto;
+}
+.ph-switch.is-mobile .ph-nav .mini .nm {
+  max-width: 92px;
+}
+.ph-switch.is-mobile .ph-nav a {
+  flex: 1;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.ph-switch.is-mobile .ph-nav a.active {
+  color: var(--th-accent);
+}
+html.dark .ph-switch.is-mobile .ph-nav a {
+  background: rgba(255, 255, 255, 0.06);
+}
+html:not(.dark) .ph-switch.is-mobile .ph-nav a {
+  background: rgba(20, 20, 30, 0.05);
 }
 </style>
