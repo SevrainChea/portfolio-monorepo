@@ -139,7 +139,10 @@ function positionLine(xp: Experience): string {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  /* clip (not hidden) so the grid/frame can't cause horizontal scroll WITHOUT
+     establishing a scroll container — `overflow: hidden` would break the sticky
+     sidebar below (sticky resolves against the nearest scroll-container ancestor). */
+  overflow: clip;
   background: var(--th-bg);
   color: var(--th-ink);
   font-family: var(--font-inter);
@@ -197,6 +200,12 @@ function positionLine(xp: Experience): string {
 }
 .bp-root .left {
   padding-right: 48px;
+  /* sticky sidebar (like Aurora). align-self:start so the grid item shrinks to
+     its content height instead of stretching the full row — otherwise it fills
+     the track and has no slack to stick. */
+  position: sticky;
+  top: 40px;
+  align-self: start;
 }
 
 /* avatar */
@@ -484,6 +493,7 @@ function positionLine(xp: Experience): string {
   }
   .bp-root .left {
     padding-right: 0;
+    position: static;
   }
   .bp-root .avatar {
     height: 240px;
