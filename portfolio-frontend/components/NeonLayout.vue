@@ -7,7 +7,7 @@
 
     <div class="wrap">
       <header class="sign">
-        <span class="open">Open to work</span>
+        <span class="otw">Open to work</span>
         <img class="avatar" :src="data.photo" :alt="data.name" />
         <h1 class="name">{{ data.firstName }}<br />{{ data.lastName }}</h1>
         <div class="role">{{ data.role }}</div>
@@ -254,7 +254,7 @@ html:not(.dark) .neon-root .sign {
     inset 0 0 12px color-mix(in srgb, var(--th-acc) 20%, transparent);
   pointer-events: none;
 }
-.neon-root .open {
+.neon-root .otw {
   position: absolute;
   top: 18px;
   right: 22px;
@@ -265,7 +265,7 @@ html:not(.dark) .neon-root .sign {
   color: var(--th-acc);
   text-shadow: 0 0 10px var(--th-acc);
 }
-.neon-root .open::before {
+.neon-root .otw::before {
   content: "";
   display: inline-block;
   width: 7px;
@@ -551,7 +551,7 @@ html:not(.dark) .neon-root .ol {
   .neon-root .sign::before {
     inset: 7px;
   }
-  .neon-root .open {
+  .neon-root .otw {
     top: 13px;
     right: 14px;
     font-size: 8.5px;
