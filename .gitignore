@@ -4,6 +4,9 @@
 .fleet/
 *.log
 
+# ── Git worktrees (isolated theme workspaces) ─────
+.worktrees/
+
 # ── Environment files (all projects) ─────────────
 .env
 .env.*
