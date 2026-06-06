@@ -1,6 +1,6 @@
 # 1. Python + RAG chatbot backend
 
-- **Status:** Accepted — reconsidered (to be superseded by [ADR-0002](0002-migrate-to-vercel-ai-sdk.md), forthcoming)
+- **Status:** Superseded by [ADR-0002](0002-migrate-to-vercel-ai-sdk.md)
 - **Date:** 2026-06-06
 
 ## Context

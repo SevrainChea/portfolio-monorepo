@@ -14,4 +14,5 @@ to reverse a decision; instead a new ADR supersedes it, and the old one is marke
 
 ## Index
 
-- [0001 — Python + RAG chatbot backend](0001-python-rag-chatbot-backend.md) — *Accepted, reconsidered*
+- [0001 — Python + RAG chatbot backend](0001-python-rag-chatbot-backend.md) — *Superseded by 0002*
+- [0002 — Migrate chatbot to Vercel AI SDK on Nitro](0002-migrate-to-vercel-ai-sdk.md) — *Accepted*
