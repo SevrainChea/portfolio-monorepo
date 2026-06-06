@@ -6,11 +6,12 @@ Conventions for components in `components/`. All components are auto-imported.
 
 | Component            | Role                                                        | Styling approach            |
 | -------------------- | ----------------------------------------------------------- | --------------------------- |
-| `AuroraLayout.vue`   | The shipped portfolio screen (aside + timeline)             | Namespaced plain CSS        |
+| `{Aurora,Neon,Editorial,Blueprint}Layout.vue` | Per-family home screen; `index.vue` switches on `family`    | Namespaced plain CSS        |
+| `{Aurora,Neon,Editorial,Blueprint}Chat.vue`   | Per-family `/chat` skin; `chat.vue` switches on `family`, shared `useChat()` | Namespaced plain CSS        |
 | `AuroraBackground.vue`| Fixed full-bleed animated background (blobs + grain)       | Scoped plain CSS            |
 | `ThemeSwitcher.vue`  | Family dropdown + variant swatches + light/dark toggle      | Scoped plain CSS            |
 | `StackTag.vue`       | Small inline tech-stack pill                                | Tailwind utilities → tokens |
-| `GlassCard.vue`      | **Legacy** glass card, only used by `chat.vue` (WIP)        | _Deprecated_                |
+| `GlassCard.vue`      | **Dead code** — no references since the themed chat redesign | _Deprecated_                |
 | `BgGradient.vue`     | **Dead code** — no references; do not reuse                 | _Deprecated_                |
 
 ## The two styling approaches

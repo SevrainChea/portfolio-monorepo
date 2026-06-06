@@ -9,15 +9,17 @@ below. **Read the relevant convention file before changing code in that area.**
 Personal portfolio for a Tech Lead / Full-Stack Engineer, built with **Nuxt 3 +
 Vue 3 (Composition API, `<script setup lang="ts">`) + TailwindCSS v4**.
 
-The live site is a single screen: `pages/index.vue` renders `<AuroraLayout>`,
-the only shipped theme **family**. The whole UI is driven by a multi-theme
-system (family → variant → light/dark) whose single source of truth is
-`theme-registry.ts`. `pages/chat.vue` is a **WIP/legacy** RAG chatbot page (its
-nav link is disabled) and uses the older Tailwind-utility + `GlassCard` style.
+The live site is a single screen: `pages/index.vue` switches on the active
+**family** to render the matching `*Layout.vue` (Aurora / Neon / Editorial /
+Blueprint). The whole UI is driven by a multi-theme system (family → variant →
+light/dark) whose single source of truth is `theme-registry.ts`. `pages/chat.vue`
+is the RAG chatbot page; it mirrors that pattern, switching on `family` to render
+the matching per-family `*Chat.vue` skin over a shared `useChat()` composable.
 
-> **Deprecated — do not extend:** glass morphism / "glass-ui" (`GlassCard.vue`),
-> `backdrop-blur` card surfaces, and `BgGradient.vue` (now unreferenced dead
-> code). New work uses the token-driven Aurora system instead. See
+> **Deprecated — do not extend:** glass morphism / "glass-ui" (`GlassCard.vue`,
+> `backdrop-blur` card surfaces) and `BgGradient.vue` are now **unreferenced dead
+> code** (GlassCard's last consumer, `chat.vue`, was replaced by the `*Chat.vue`
+> skins). New work uses the token-driven per-family system instead. See
 > [styling-and-themes.md](docs/conventions/styling-and-themes.md).
 
 ## Commands

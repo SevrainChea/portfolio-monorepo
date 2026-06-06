@@ -103,6 +103,7 @@ from the registry.
 ## Deprecated
 
 Glass morphism / "glass-ui" (`GlassCard.vue`, `backdrop-blur` card surfaces) and
-`BgGradient.vue` are **deprecated**. `BgGradient.vue` is unreferenced dead code.
-`GlassCard` survives only in the WIP `chat.vue`. Don't build new surfaces on
-them — use the token-driven Aurora approach.
+`BgGradient.vue` are **deprecated**. Both are now unreferenced dead code —
+`GlassCard`'s last consumer (`chat.vue`) was replaced by the per-family
+`*Chat.vue` skins in the themed-chat redesign. Don't build new surfaces on them —
+use the token-driven per-family approach.
