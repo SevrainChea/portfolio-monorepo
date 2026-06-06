@@ -8,7 +8,7 @@
 // UPCOMING_FAMILIES). Everything else (switcher swatches, the FOUC script's
 // default map, the active-ring CSS) derives from this registry.
 
-export type FamilyId = "aurora" | "neon"; // | "editorial" | "blueprint"
+export type FamilyId = "aurora" | "neon" | "editorial"; // | "blueprint"
 export type Mode = "dark" | "light";
 
 export interface VariantDef {
@@ -92,11 +92,35 @@ export const THEME_REGISTRY: Record<FamilyId, FamilyDef> = {
       },
     ],
   },
+  editorial: {
+    id: "editorial",
+    name: "Editorial",
+    sub: "The issue",
+    defaultVariant: "issue",
+    defaultMode: "light",
+    breakpoint: 760,
+    variants: [
+      {
+        id: "issue",
+        name: "The Issue",
+        swatch: { light: ["#f4efe4", "#b8472b"], dark: ["#191510", "#e07a4a"] },
+      },
+      {
+        id: "noir",
+        name: "Broadsheet",
+        swatch: { light: ["#faf8f1", "#14110c"], dark: ["#141413", "#f5f3ec"] },
+      },
+      {
+        id: "forest",
+        name: "Quarterly",
+        swatch: { light: ["#eef0e9", "#2f6d52"], dark: ["#121712", "#6fbb8c"] },
+      },
+    ],
+  },
 };
 
 /** Families not yet implemented — shown disabled in the switcher dropdown. */
 export const UPCOMING_FAMILIES = [
-  { id: "editorial", name: "Editorial" },
   { id: "blueprint", name: "Blueprint" },
 ] as const;
 

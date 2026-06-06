@@ -397,3 +397,70 @@
   --th-head: #1a2138;
   --th-accent: var(--th-glow);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   EDITORIAL — a printed literary issue. Roles: paper→--th-bg, ink→--th-ink,
+   acc→--th-accent, mut→--th-muted, rule→--th-border, body→--th-body,
+   grain→--th-grain-op. LIGHT is the base edition; .dark is the "night
+   edition". Values verbatim from design-files/theme-editorial.jsx (ED_*).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Editorial · The Issue (warm paper + rust) ─── */
+[data-family="editorial"][data-variant="issue"]:not(.dark) {
+  --th-bg: #f4efe4;
+  --th-ink: #23201a;
+  --th-accent: #b8472b;
+  --th-muted: #6f6557;
+  --th-border: #cbb89a;
+  --th-body: #3a342b;
+  --th-grain-op: 0.5;
+}
+[data-family="editorial"][data-variant="issue"].dark {
+  --th-bg: #191510;
+  --th-ink: #f3ece0;
+  --th-accent: #e07a4a;
+  --th-muted: #9a8d7c;
+  --th-border: #3a3228;
+  --th-body: #d6cabb;
+  --th-grain-op: 0.6;
+}
+
+/* ─── Editorial · Broadsheet (near B&W newsprint, accent = ink) ─── */
+[data-family="editorial"][data-variant="noir"]:not(.dark) {
+  --th-bg: #faf8f1;
+  --th-ink: #16130d;
+  --th-accent: #14110c;
+  --th-muted: #6b6354;
+  --th-border: #d8cdb8;
+  --th-body: #2c281f;
+  --th-grain-op: 0.4;
+}
+[data-family="editorial"][data-variant="noir"].dark {
+  --th-bg: #141413;
+  --th-ink: #f5f3ec;
+  --th-accent: #f5f3ec;
+  --th-muted: #8f897e;
+  --th-border: #33312b;
+  --th-body: #d9d6cc;
+  --th-grain-op: 0.5;
+}
+
+/* ─── Editorial · Quarterly (cool ivory + forest green) ─── */
+[data-family="editorial"][data-variant="forest"]:not(.dark) {
+  --th-bg: #eef0e9;
+  --th-ink: #1b211c;
+  --th-accent: #2f6d52;
+  --th-muted: #5f6b60;
+  --th-border: #c4ccc1;
+  --th-body: #2f372f;
+  --th-grain-op: 0.32;
+}
+[data-family="editorial"][data-variant="forest"].dark {
+  --th-bg: #121712;
+  --th-ink: #eef2e9;
+  --th-accent: #6fbb8c;
+  --th-muted: #8a958a;
+  --th-border: #2a322a;
+  --th-body: #ccd6cb;
+  --th-grain-op: 0.4;
+}
