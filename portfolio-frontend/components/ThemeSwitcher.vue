@@ -549,10 +549,8 @@ html:not(.dark) .ph-switch .ph-menu button:hover {
 }
 .ph-switch.is-mobile .fam {
   flex: 0 0 auto;
-  /* static so the dropdown anchors to the full-width .ph-row (and can be pinned
-     to its right edge) instead of to the centered trigger, whose position
-     shifts with the active family's name length. */
-  position: static;
+  /* relative (default) so the dropdown anchors to the trigger and visually
+     drops from the pill, rather than floating at the header's right edge. */
 }
 .ph-switch.is-mobile .fam .lbl {
   display: none;
@@ -572,10 +570,13 @@ html:not(.dark) .ph-switch .ph-menu button:hover {
   width: 33px;
   height: 33px;
 }
+/* Drop the menu from the trigger (left-aligned, opening down-right) so it reads
+   as hanging off the pill. The trigger sits roughly centered in the bar, so a
+   190px menu opening rightward stays within the viewport at mobile widths. */
 .ph-switch.is-mobile .ph-menu {
-  top: 46px;
-  right: 14px;
-  left: auto;
+  top: calc(100% + 14px);
+  left: 0;
+  right: auto;
 }
 .ph-switch.is-mobile .ph-nav {
   display: flex;
