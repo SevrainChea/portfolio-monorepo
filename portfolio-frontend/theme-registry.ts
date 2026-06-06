@@ -8,7 +8,7 @@
 // UPCOMING_FAMILIES). Everything else (switcher swatches, the FOUC script's
 // default map, the active-ring CSS) derives from this registry.
 
-export type FamilyId = "aurora"; // | "neon" | "editorial" | "blueprint"
+export type FamilyId = "aurora" | "neon"; // | "editorial" | "blueprint"
 export type Mode = "dark" | "light";
 
 export interface VariantDef {
@@ -67,22 +67,47 @@ export const THEME_REGISTRY: Record<FamilyId, FamilyDef> = {
       },
     ],
   },
+  neon: {
+    id: "neon",
+    name: "Neon",
+    sub: "Neon sign",
+    defaultVariant: "hotline",
+    defaultMode: "dark",
+    breakpoint: 760,
+    variants: [
+      {
+        id: "hotline",
+        name: "Hotline",
+        swatch: { dark: ["#ff2e88", "#2de2e6"], light: ["#e0247a", "#0aa1a6"] },
+      },
+      {
+        id: "acid",
+        name: "Acid",
+        swatch: { dark: ["#b6ff3c", "#2f9bff"], light: ["#4fa514", "#1f78d6"] },
+      },
+      {
+        id: "electric",
+        name: "Electric",
+        swatch: { dark: ["#2e9bff", "#b14bff"], light: ["#1f5fe0", "#8b2fdc"] },
+      },
+    ],
+  },
 };
 
 /** Families not yet implemented — shown disabled in the switcher dropdown. */
 export const UPCOMING_FAMILIES = [
-  { id: "neon", name: "Neon" },
   { id: "editorial", name: "Editorial" },
   { id: "blueprint", name: "Blueprint" },
 ] as const;
 
 /** `{ [familyId]: [defaultVariant, defaultMode] }` — derived for the FOUC script. */
-export const FAMILY_DEFAULTS: Record<string, [string, Mode]> = Object.fromEntries(
-  Object.values(THEME_REGISTRY).map((f) => [
-    f.id,
-    [f.defaultVariant, f.defaultMode],
-  ]),
-);
+export const FAMILY_DEFAULTS: Record<string, [string, Mode]> =
+  Object.fromEntries(
+    Object.values(THEME_REGISTRY).map((f) => [
+      f.id,
+      [f.defaultVariant, f.defaultMode],
+    ]),
+  );
 
 /** All variant ids across every registered family (for the active-ring CSS). */
 export const ALL_VARIANT_IDS: string[] = Object.values(THEME_REGISTRY).flatMap(
