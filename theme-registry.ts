@@ -160,3 +160,12 @@ export const FAMILY_DEFAULTS: Record<string, [string, Mode]> =
 export const ALL_VARIANT_IDS: string[] = Object.values(THEME_REGISTRY).flatMap(
   (f) => f.variants.map((v) => v.id),
 );
+
+/** Pick a random family + one of its variants (chosen fresh per page load). */
+export function pickRandomTheme(): { family: FamilyId; variant: string } {
+  const ids = Object.keys(THEME_REGISTRY) as FamilyId[];
+  const family = ids[Math.floor(Math.random() * ids.length)];
+  const variants = THEME_REGISTRY[family].variants;
+  const variant = variants[Math.floor(Math.random() * variants.length)].id;
+  return { family, variant };
+}

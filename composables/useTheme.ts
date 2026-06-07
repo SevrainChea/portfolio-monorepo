@@ -1,21 +1,19 @@
-// Reactive, persisted theme state for the multi-theme portfolio.
+// Reactive (session-only) theme state for the multi-theme portfolio.
 //
-// Axes: family → variant → mode. The registry, storage keys, and per-family
-// defaults live in the dependency-free `~/theme-registry` module so they are
-// shared with nuxt.config's pre-paint FOUC script and can't drift.
+// Axes: family → variant → mode. The registry and per-family defaults live in
+// the dependency-free `~/theme-registry` module so they are shared with
+// nuxt.config's pre-paint FOUC script and can't drift.
 //
-// The active family/variant/mode are written onto <html> as
-// `data-family` / `data-variant` / `.dark` (by the inline script before paint
-// and by app.vue's watcher thereafter). Components read CSS `var(--th-*)`
-// tokens, which resolve to whichever selector block matches those attributes.
+// Family/variant are randomized per request on the server (plugins/random-theme)
+// and ship in the payload; mode follows the OS prefers-color-scheme. Nothing is
+// persisted — every full page load picks a fresh theme. The active values are
+// written onto <html> as `data-family` / `data-variant` (by the plugin's
+// useHead) and `.dark` (by the inline script before paint, then app.vue's
+// watcher). Components read CSS `var(--th-*)` tokens, which resolve to whichever
+// selector block matches those attributes.
 
 import { computed, onMounted } from "vue";
-import {
-  THEME_REGISTRY,
-  STORAGE_KEYS,
-  type FamilyId,
-  type Mode,
-} from "~/theme-registry";
+import { THEME_REGISTRY, type FamilyId, type Mode } from "~/theme-registry";
 
 // Re-export so components can import everything theme-related from one place.
 export {
@@ -26,25 +24,6 @@ export {
 } from "~/theme-registry";
 export type { FamilyId, Mode, VariantDef, FamilyDef } from "~/theme-registry";
 
-function loadString(key: string, fallback: string): string {
-  if (!import.meta.client) return fallback;
-  try {
-    return localStorage.getItem(key) ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function loadJSON<T>(key: string, fallback: T): T {
-  if (!import.meta.client) return fallback;
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 export function useTheme() {
   const family = useState<FamilyId>("pf-family", () => "aurora");
   const variants = useState<Record<string, string>>("pf-variants", () => ({}));
@@ -54,20 +33,14 @@ export function useTheme() {
   // explicit choice is stored. null = no OS preference → use the family default.
   const systemMode = useState<Mode | null>("pf-system-mode", () => null);
 
-  // Hydrate from localStorage AFTER mount, not during setup: this keeps the
-  // first client render identical to the SSR default render, avoiding a Vue
-  // hydration mismatch that otherwise left a stale `active` class on the
-  // switcher. The post-mount state update flushes before paint, so there is no
-  // visible flash.
+  // Family/variant are seeded per request on the server (plugins/random-theme)
+  // and travel in the payload, so there is nothing to restore here. We only
+  // detect the OS light/dark preference AFTER mount (it can't be known during
+  // SSR); that update flushes before paint so there is no flash.
   if (import.meta.client) {
     onMounted(() => {
       if (hydrated.value) return;
       hydrated.value = true;
-      const storedFamily = loadString(STORAGE_KEYS.family, "aurora");
-      if (storedFamily in THEME_REGISTRY)
-        family.value = storedFamily as FamilyId;
-      variants.value = loadJSON<Record<string, string>>(STORAGE_KEYS.variants, {});
-      modes.value = loadJSON<Record<string, Mode>>(STORAGE_KEYS.modes, {});
       const mm = window.matchMedia;
       systemMode.value = mm("(prefers-color-scheme: dark)").matches
         ? "dark"
@@ -99,29 +72,17 @@ export function useTheme() {
     () => currentVariantDef.value.swatch[currentMode.value][1],
   );
 
-  function persist() {
-    if (!import.meta.client) return;
-    try {
-      localStorage.setItem(STORAGE_KEYS.family, family.value);
-      localStorage.setItem(STORAGE_KEYS.variants, JSON.stringify(variants.value));
-      localStorage.setItem(STORAGE_KEYS.modes, JSON.stringify(modes.value));
-    } catch {
-      /* ignore quota / disabled storage */
-    }
-  }
-
+  // Live, session-only overrides — the theme re-randomizes on the next full
+  // page load, so nothing is persisted to storage.
   function setFamily(id: FamilyId) {
     if (!(id in THEME_REGISTRY)) return;
     family.value = id;
-    persist();
   }
   function setVariant(id: string) {
     variants.value = { ...variants.value, [family.value]: id };
-    persist();
   }
   function setMode(m: Mode) {
     modes.value = { ...modes.value, [family.value]: m };
-    persist();
   }
   function toggleMode() {
     setMode(currentMode.value === "dark" ? "light" : "dark");

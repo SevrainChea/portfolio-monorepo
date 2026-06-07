@@ -10,21 +10,19 @@
 <script setup lang="ts">
 import { watch } from "vue";
 
-// The initial <html> theme attributes are written by a render-blocking inline
-// script (see nuxt.config app.head) so a stored non-default theme paints
-// correctly on the first frame — no flash of the default. Here we only keep
-// those attributes in sync with reactive state for live theme changes.
-// immediate:false so we never overwrite the script's values with the SSR
-// defaults before localStorage hydration (which happens in useTheme onMounted).
-const { family, currentVariant, currentMode } = useTheme();
+// data-family / data-variant are written onto <html> by plugins/random-theme
+// (via useHead, on both SSR and live changes). The light/dark mode, however, is
+// resolved client-side (OS preference, known only after mount) — the inline FOUC
+// script sets it before paint, and here we keep it in sync with reactive state
+// for live toggles. immediate:false so we never clobber the script's pre-paint
+// value with the SSR default before systemMode is detected in useTheme onMounted.
+const { family, currentMode } = useTheme();
 
 if (import.meta.client) {
   watch(
-    [family, currentVariant, currentMode],
-    ([f, v, m]) => {
+    currentMode,
+    (m) => {
       const el = document.documentElement;
-      el.setAttribute("data-family", f);
-      el.setAttribute("data-variant", v);
       el.classList.toggle("dark", m === "dark");
       el.style.colorScheme = m;
     },
