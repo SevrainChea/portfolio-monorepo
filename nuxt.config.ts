@@ -26,6 +26,16 @@ export default defineNuxtConfig({
   },
   modules: ["@nuxt/image", "@nuxt/icon"],
 
+  // The theme family/variant is randomized per request on the server
+  // (plugins/random-theme), so the rendered HTML must NOT be cached at the
+  // Vercel edge — otherwise one random pick gets frozen for everyone. Force a
+  // fresh SSR render of the page documents on every request. (Hashed /_nuxt
+  // assets keep their own immutable caching.)
+  routeRules: {
+    "/": { headers: { "cache-control": "no-store" } },
+    "/chat": { headers: { "cache-control": "no-store" } },
+  },
+
   // Ships to Vercel as Nitro functions (the chat route lives at server/api/chat).
   nitro: { preset: "vercel" },
 
