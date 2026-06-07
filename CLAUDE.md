@@ -1,57 +1,86 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repo. This file is a lean index —
+detailed conventions live in `docs/conventions/` and are linked below. **Read the
+relevant convention file before changing code in that area.**
 
-## Repository Structure
+This is a single Nuxt application — the UI **and** its chat backend (a Nitro
+server route). It used to be a monorepo paired with a standalone Python RAG
+service; that service was extracted to its own repo
+([sandbox-rag](https://github.com/SevrainChea/sandbox-rag)) and superseded by an
+in-app Nitro route — see [ADR-0002](docs/adr/0002-migrate-to-vercel-ai-sdk.md).
 
-Monorepo with two independent projects:
+## Project Overview
 
-- `portfolio-frontend/` — Nuxt 3 + Vue 3 + TailwindCSS v4 single-page portfolio site
-- `chatbot-backend/` — FastAPI Python backend with RAG-based chatbot
+Personal portfolio for a Tech Lead / Full-Stack Engineer, built with **Nuxt 3 +
+Vue 3 (Composition API, `<script setup lang="ts">`) + TailwindCSS v4**.
 
-See `portfolio-frontend/CLAUDE.md` for detailed frontend guidance (design tokens, component patterns, etc.).
+The live site is a single screen: `pages/index.vue` switches on the active
+**family** to render the matching `*Layout.vue` (Aurora / Neon / Editorial /
+Blueprint). The whole UI is driven by a multi-theme system (family → variant →
+light/dark) whose single source of truth is `theme-registry.ts`. `pages/chat.vue`
+is the chatbot page; it mirrors that pattern, switching on `family` to render the
+matching per-family `*Chat.vue` skin over a shared `useChat()` composable.
 
-## Frontend Commands
+> **Deprecated — do not extend:** glass morphism / "glass-ui" (`GlassCard.vue`,
+> `backdrop-blur` card surfaces) and `BgGradient.vue` are now **unreferenced dead
+> code** (GlassCard's last consumer, `chat.vue`, was replaced by the `*Chat.vue`
+> skins). New work uses the token-driven per-family system instead. See
+> [styling-and-themes.md](docs/conventions/styling-and-themes.md).
 
-Run from `portfolio-frontend/`. Package manager is **pnpm**.
+## Commands
 
-```
-pnpm dev        # Dev server at localhost:3000 (hot-reload)
-pnpm build      # Production build
-pnpm generate   # Static site generation
-pnpm preview    # Preview production build
-```
+Package manager is **pnpm** (v10.11.1); Node is pinned in `.nvmrc` (v22.16.0).
 
-No test framework or linter configured. Formatting: Prettier with `prettier-plugin-tailwindcss`.
+- `pnpm dev` — dev server at localhost:3000 (the user keeps one running; **do
+  not start your own** — changes hot-reload)
+- `pnpm build` / `pnpm generate` / `pnpm preview`
 
-## Backend Commands
+No test framework or linter is configured. Formatting is **Prettier** with
+`prettier-plugin-tailwindcss` (defaults: 2-space, double quotes, semicolons,
+trailing commas).
 
-Run from `chatbot-backend/`. Uses Python with a virtual environment.
+## Architecture at a glance
 
-```bash
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-python scripts/ingest_data.py      # Populate ChromaDB from data/personal_data.json
-uvicorn app.main:app --reload      # Dev server at localhost:8000
-```
+- `app.vue` — renders `<AuroraBackground>` + `<NuxtPage>`; syncs reactive theme
+  state onto `<html>` attributes (`data-family` / `data-variant` / `.dark`).
+- `nuxt.config.ts` — injects a **render-blocking inline script** that sets those
+  `<html>` attributes pre-paint to avoid a flash of the default theme (FOUC).
+- `theme-registry.ts` — dependency-free single source of truth for families,
+  variants, defaults, and storage keys (shared by `useTheme` AND the FOUC
+  script so they can't drift).
+- `composables/useTheme.ts` — reactive, persisted theme state.
+- `composables/usePortfolioData.ts` — all site content (typed, hardcoded).
+- `assets/css/tailwind.css` — `@theme` token map + the theme registry CSS
+  (every variant/mode is a selector block re-setting `--th-*` role tokens).
 
-Deployed to Railway via `Procfile`: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+### Chat backend (Nitro)
 
-## Backend Architecture
+- `server/api/chat.post.ts` — streaming chat endpoint using the **Vercel AI SDK**
+  (`streamText` → `toUIMessageStreamResponse`). No RAG; the whole knowledge base
+  is injected directly into the system prompt.
+- `server/utils/` — `knowledge.ts` (builds the context block from
+  `server/data/personal_data.json`), `prompt.ts` (system prompt), `llm.ts`
+  (provider factory: Groq / Gemini / Ollama, selected via `runtimeConfig`).
+- `composables/useChat.ts` — wraps `@ai-sdk/vue`'s `Chat` class and adapts
+  `chat.messages` to the shape the `*Chat.vue` skins consume.
+- Provider/key config lives in `runtimeConfig` (server-only) in `nuxt.config.ts`,
+  read from env (`LLM_PROVIDER`, `GROQ_API_KEY`, etc.); see `.env.example`.
 
-**FastAPI app** (`app/`) with clean service/router separation:
+## Conventions (read before editing)
 
-- `app/main.py` — App init, CORS middleware, startup/shutdown handlers
-- `app/config.py` — Pydantic `BaseSettings` (env vars: `LLM_PROVIDER`, `GEMINI_API_KEY`, `CORS_ORIGINS`, etc.)
-- `app/routers/chat.py` — `POST /api/chat` (non-streaming), `POST /api/chat/stream` (SSE streaming), `GET /api/stats`
-- `app/services/llm_service.py` — Abstract `LLMProvider` with `OllamaProvider`, `GeminiProvider`, `GroqProvider`; each implements both `generate()` (sync) and `generate_stream()` (async generator). Factory selects based on `LLM_PROVIDER` env var
-- `app/services/rag_service.py` — ChromaDB vector store; collection `portfolio_knowledge`; retrieves top-3 docs by default
-- `data/personal_data.json` — Knowledge base (6 documents); re-ingest after editing via `ingest_data.py`
+- [code-style.md](docs/conventions/code-style.md) — TS, `<script setup>`,
+  imports/auto-imports, comments, formatting.
+- [components.md](docs/conventions/components.md) — component patterns, props,
+  accessibility, the two styling approaches, what's deprecated.
+- [styling-and-themes.md](docs/conventions/styling-and-themes.md) — the `--th-*`
+  token contract, adding a variant or a family, the FOUC/hydration rules.
+- [composables-data.md](docs/conventions/composables-data.md) — editing site
+  content, the data model, `useTheme` API.
 
-**RAG flow (streaming):** `POST /api/chat/stream` → `asyncio.to_thread(rag_service.retrieve)` → stream tokens via `StreamingResponse` (SSE) → final `done` event carries `conversation_id`, `sources`, `model_used`.
+## Git workflow notes
 
-**RAG flow (non-streaming):** `POST /api/chat` → retrieve context (k=3) → inject into LLM prompt → return full `ChatResponse`.
-
-**LLM strategy:** Ollama (local, no API key) for development; Groq (free tier, 14,400 RPD) for production. Switch via `LLM_PROVIDER=ollama|groq|gemini`.
-
-**Async rules:** All `generate_stream` methods use async SDK clients (`ollama.AsyncClient`, `AsyncGroq`, `generate_content_async`). Blocking calls (ChromaDB) are wrapped with `asyncio.to_thread()`. Do NOT use sync clients inside `async def` endpoints.
+- After `git checkout` switches branches, the Edit tool's file cache goes stale
+  — re-read files before editing.
+- Force-delete (`git branch -D`) is needed for branches never merged into
+  `main`.

@@ -3,27 +3,21 @@
 .idea/
 .fleet/
 *.log
+logs
 
 # ── Git worktrees (isolated theme workspaces) ─────
 .worktrees/
 
-# ── Environment files (all projects) ─────────────
+# ── Environment files ─────────────────────────────
 .env
 .env.*
 !.env.example
 
-# ── Frontend (Nuxt) ───────────────────────────────
+# ── Nuxt dev/build outputs ────────────────────────
 node_modules/
-portfolio-frontend/.output/
-portfolio-frontend/.data/
-portfolio-frontend/.nuxt/
-portfolio-frontend/.nitro/
-portfolio-frontend/.cache/
-portfolio-frontend/dist/
-
-# ── Backend (Python) ──────────────────────────────
-__pycache__/
-*.pyc
-*.pyo
-chatbot-backend/venv/
-chatbot-backend/chroma_db/
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
