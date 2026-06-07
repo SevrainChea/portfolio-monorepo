@@ -26,9 +26,20 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   modules: ["@nuxt/image", "@nuxt/icon"],
+
+  // Ships to Vercel as Nitro functions (the chat route lives at server/api/chat).
+  nitro: { preset: "vercel" },
+
+  // Server-only chat config. Keys mirror the Python backend's env var names
+  // (chatbot-backend/app/config.py) so config carries over 1:1. These are NOT
+  // public — the API key never reaches the client.
   runtimeConfig: {
-    public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000",
-    },
+    llmProvider: process.env.LLM_PROVIDER || "ollama",
+    groqApiKey: process.env.GROQ_API_KEY || "",
+    groqModel: process.env.GROQ_MODEL || "llama-3.1-8b-instant",
+    geminiApiKey: process.env.GEMINI_API_KEY || "",
+    geminiModel: process.env.GEMINI_MODEL || "gemini-2.0-flash-lite",
+    ollamaModel: process.env.OLLAMA_MODEL || "llama3.2",
+    ollamaBaseUrl: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
   },
 });

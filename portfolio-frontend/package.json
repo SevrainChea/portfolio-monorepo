@@ -10,13 +10,19 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.80",
+    "@ai-sdk/groq": "^3.0.39",
+    "@ai-sdk/vue": "^3.0.197",
     "@nuxt/icon": "1.13.0",
     "@nuxt/image": "1.10.0",
     "@tailwindcss/vite": "^4.1.8",
+    "ai": "^6.0.197",
     "nuxt": "^3.17.4",
+    "ollama-ai-provider-v2": "^3.5.1",
     "tailwindcss": "^4.1.8",
     "vue": "^3.5.15",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "zod": "^4.4.3"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
   "devDependencies": {

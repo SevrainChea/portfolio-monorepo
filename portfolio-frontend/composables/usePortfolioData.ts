@@ -43,8 +43,7 @@ const portfolio = {
   nav: [
     { label: "About", href: "#about" },
     { label: "Experiences", href: "#experiences" },
-    // WIP — re-enable once the chat page is ready.
-    // { label: "Chat", href: "/chat" },
+    { label: "Chat", href: "/chat" },
   ] as NavItem[],
 
   // HTML strings — inline <b> emphasis (e.g. Mayday) is preserved via v-html.
