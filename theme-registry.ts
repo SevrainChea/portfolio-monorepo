@@ -161,6 +161,12 @@ export const ALL_VARIANT_IDS: string[] = Object.values(THEME_REGISTRY).flatMap(
   (f) => f.variants.map((v) => v.id),
 );
 
+/** `{ [familyId]: [...variantIds] }` — injected into the pre-paint inline script
+ * so it can pick a random family + variant before first paint. */
+export const FAMILY_VARIANT_IDS: Record<string, string[]> = Object.fromEntries(
+  Object.values(THEME_REGISTRY).map((f) => [f.id, f.variants.map((v) => v.id)]),
+);
+
 /** Pick a random family + one of its variants (chosen fresh per page load). */
 export function pickRandomTheme(): { family: FamilyId; variant: string } {
   const ids = Object.keys(THEME_REGISTRY) as FamilyId[];

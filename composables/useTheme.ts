@@ -4,12 +4,13 @@
 // the dependency-free `~/theme-registry` module so they are shared with
 // nuxt.config's pre-paint FOUC script and can't drift.
 //
-// Family/variant are randomized per request on the server (plugins/random-theme)
-// and ship in the payload; mode follows the OS prefers-color-scheme. Nothing is
-// persisted — every full page load picks a fresh theme. The active values are
-// written onto <html> as `data-family` / `data-variant` (by the plugin's
-// useHead) and `.dark` (by the inline script before paint, then app.vue's
-// watcher). Components read CSS `var(--th-*)` tokens, which resolve to whichever
+// Family/variant are randomized in the browser on every page load: the pre-paint
+// inline script (nuxt.config) picks them and stashes window.__pfTheme, which
+// plugins/random-theme.client seeds into the useState below. Mode follows the OS
+// prefers-color-scheme. Nothing is persisted — every load picks a fresh theme.
+// The active values are written onto <html> as `data-family` / `data-variant` /
+// `.dark` (by the inline script before paint, then app.vue's watcher for live
+// changes). Components read CSS `var(--th-*)` tokens, which resolve to whichever
 // selector block matches those attributes.
 
 import { computed, onMounted } from "vue";

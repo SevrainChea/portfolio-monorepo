@@ -16,6 +16,7 @@ logs
 # ── Nuxt dev/build outputs ────────────────────────
 node_modules/
 .output
+.vercel
 .data
 .nuxt
 .nitro
